@@ -8,9 +8,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
 
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-only-change-this-secret-key")
+# Security settings
+SECRET_KEY = os.getenv(
+    "DJANGO_SECRET_KEY",
+    "dev-only-change-this-secret-key",
+)
 
-# Debug defaults: enabled locally, disabled in production.
 _default_debug = (
     "False"
     if (
@@ -23,7 +26,7 @@ _default_debug = (
 DEBUG = os.getenv("DJANGO_DEBUG", _default_debug).strip().lower() == "true"
 
 
-# Allowed hosts.
+# Allowed hosts
 _hosts_value = os.getenv(
     "DJANGO_ALLOWED_HOSTS",
     os.getenv(
@@ -31,13 +34,13 @@ _hosts_value = os.getenv(
         "medikhoj.onrender.com,localhost,127.0.0.1",
     ),
 )
+
 ALLOWED_HOSTS = [
     host.strip()
     for host in _hosts_value.split(",")
     if host.strip()
 ]
 
-# Automatically include Render's service hostname.
 render_host = os.getenv("RENDER_EXTERNAL_HOSTNAME", "").strip()
 if render_host and render_host not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(render_host)
@@ -47,6 +50,7 @@ for host in ("localhost", "127.0.0.1"):
         ALLOWED_HOSTS.append(host)
 
 
+# Applications
 INSTALLED_APPS = [
     "cloudinary_storage",
     "cloudinary",
@@ -64,6 +68,7 @@ INSTALLED_APPS = [
 ]
 
 
+# Middleware
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -98,7 +103,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
 
-# Database configuration: Neon PostgreSQL in production, SQLite locally.
+# Database: Neon PostgreSQL in production, SQLite locally
 DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
 
 if DATABASE_URL:
@@ -118,6 +123,7 @@ else:
     }
 
 
+# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": (
@@ -146,19 +152,20 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Internationalization
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = os.getenv("TIME_ZONE", "Asia/Kolkata")
 USE_I18N = True
 USE_TZ = True
 
 
-# Static files.
+# Static files
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 
-# Cloudinary configuration for uploaded media.
+# Cloudinary: uploaded medicine images and other user media
 CLOUDINARY_STORAGE = {
     "CLOUD_NAME": os.getenv("CLOUDINARY_CLOUD_NAME", ""),
     "API_KEY": os.getenv("CLOUDINARY_API_KEY", ""),
@@ -169,9 +176,10 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 
-# Django storage configuration.
-# Medicine images use Cloudinary.
-# Static assets remain local during development and use WhiteNoise in production.
+# Storage configuration
+# User uploads go to Cloudinary.
+# Static assets use local storage during development
+# and compressed WhiteNoise storage in production.
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
@@ -180,7 +188,7 @@ STORAGES = {
         "BACKEND": (
             "django.contrib.staticfiles.storage.StaticFilesStorage"
             if DEBUG
-            else "whitenoise.storage.CompressedManifestStaticFilesStorage"
+            else "whitenoise.storage.CompressedStaticFilesStorage"
         ),
     },
 }
@@ -196,7 +204,7 @@ LOGIN_REDIRECT_URL = "customer_dashboard"
 LOGOUT_REDIRECT_URL = "home"
 
 
-# CSRF and HTTPS settings.
+# CSRF and HTTPS settings
 CSRF_TRUSTED_ORIGINS = [
     f"https://{host}"
     for host in ALLOWED_HOSTS
@@ -234,7 +242,7 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 
-# Email configuration.
+# Email
 EMAIL_HOST = os.getenv("EMAIL_HOST", "")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() == "true"
@@ -253,7 +261,7 @@ EMAIL_BACKEND = (
 )
 
 
-# Log server errors to Render's application logs.
+# Logging
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -277,6 +285,6 @@ LOGGING = {
 }
 
 
-# Optional Razorpay online payments.
+# Optional Razorpay payments
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "").strip()
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "").strip()
