@@ -927,8 +927,8 @@
   margin-bottom: 13px;
 }
 .mm-image-strip-card {
-  width: clamp(320px, 70vw, 900px);
-  height: clamp(180px, 35vw, 340px);
+  width: clamp(360px, 48vw, 700px);
+  height: clamp(220px, 25vw, 360px);
   flex: 0 0 auto;
   overflow: hidden;
   border-radius: 17px;
