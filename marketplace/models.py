@@ -55,27 +55,29 @@ class MedicineCategory(models.Model):
 
 class MedicineProduct(models.Model):
     class DosageForm(models.TextChoices):
-    TABLET = "tablet", "Tablet"
-    CAPSULE = "capsule", "Capsule"
-    SYRUP = "syrup", "Syrup / liquid"
-    INJECTION = "injection", "Injection"
-    CREAM = "cream", "Cream / ointment"
-    DROPS = "drops", "Drops"
-    INHALER = "inhaler", "Inhaler"
-    DEVICE = "device", "Medical device"
-    OTHER = "other", "Other"
+        TABLET = "tablet", "Tablet"
+        CAPSULE = "capsule", "Capsule"
+        SYRUP = "syrup", "Syrup / liquid"
+        INJECTION = "injection", "Injection"
+        CREAM = "cream", "Cream / ointment"
+        DROPS = "drops", "Drops"
+        INHALER = "inhaler", "Inhaler"
+        DEVICE = "device", "Medical device"
+        OTHER = "other", "Other"
 
-    SOAP = "soap", "Soap"
-    SHAMPOO = "shampoo", "Shampoo"
-    HAIR_OIL = "hair_oil", "Hair oil"
-    FACE_WASH = "face_wash", "Face wash"
-    BABY_FOOD = "baby_food", "Baby food"
-    NUTRITION_DRINK = "nutrition_drink", "Nutrition drink"
-    GLUCOSE_POWDER = "glucose_powder", "Glucose powder"
-    INFANT_FORMULA = "infant_formula", "Infant formula"
-    PETROLEUM_JELLY = "petroleum_jelly", "Petroleum jelly"
-    BANDAGE = "bandage", "Bandage"
-    ORAL_POWDER = "oral_powder", "Oral powder"
+        SOAP = "soap", "Soap"
+        SHAMPOO = "shampoo", "Shampoo"
+        HAIR_OIL = "hair_oil", "Hair oil"
+        FACE_WASH = "face_wash", "Face wash"
+        BABY_FOOD = "baby_food", "Baby food"
+        NUTRITION_DRINK = "nutrition_drink", "Nutrition drink"
+        GLUCOSE_POWDER = "glucose_powder", "Glucose powder"
+        INFANT_FORMULA = "infant_formula", "Infant formula"
+        PETROLEUM_JELLY = "petroleum_jelly", "Petroleum jelly"
+        BANDAGE = "bandage", "Bandage"
+        ORAL_POWDER = "oral_powder", "Oral powder"
+
+    # Keep your existing MedicineProduct model fields here.
 
     brand_name = models.CharField(max_length=160, db_index=True)
     generic_name = models.CharField(max_length=160, blank=True, db_index=True)
