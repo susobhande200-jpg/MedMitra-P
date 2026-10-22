@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .csv_import_views import retailer_listing_csv_import
 
 urlpatterns = [
     path("about/", views.content_page, {"slug": "about"}, name="about"),
@@ -17,6 +18,7 @@ urlpatterns = [
     path("retailer/counter-sales/new/", views.retailer_counter_sale, name="retailer_counter_sale"),
     path("counter-receipts/<uuid:token>/", views.counter_sale_receipt, name="counter_sale_receipt"),
     path("retailer/listings/", views.retailer_listings, name="retailer_listings"),
+    path("retailer/listings/import-csv/", retailer_listing_csv_import, name="retailer_listing_csv_import"),
     path("retailer/listings/add/", views.retailer_listing_form, name="retailer_listing_add"),
     path("retailer/listings/<int:pk>/edit/", views.retailer_listing_form, name="retailer_listing_edit"),
     path("retailer/orders/", views.retailer_orders, name="retailer_orders"),

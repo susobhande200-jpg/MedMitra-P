@@ -2,7 +2,7 @@
 {% block title %}{% if listing %}Edit{% else %}Add{% endif %} medicine — MedMitra{% endblock %}
 {% block content %}
 <section class="mk-form-page"><div class="container"><div class="row justify-content-center"><div class="col-xl-8">
-  <div class="mk-form-intro"><div class="mk-section-kicker">{{ pharmacy.name }}</div><h1>{% if listing %}Update a medicine <span class="mk-gradient-text">listing</span>{% else %}Add a medicine <span class="mk-gradient-text">listing</span>{% endif %}</h1><p>Choose an existing catalogue item or add a new medicine, then set your shop's price, stock and batch information.</p></div>
+  <div class="mk-form-intro"><div class="mk-section-kicker">{{ pharmacy.name }}</div><div class="d-flex flex-wrap justify-content-between align-items-start gap-3"><div><h1>{% if listing %}Update a medicine <span class="mk-gradient-text">listing</span>{% else %}Add a medicine <span class="mk-gradient-text">listing</span>{% endif %}</h1><p>Choose an existing catalogue item or add a new medicine, then set your shop's price, stock and batch information.</p></div><a class="btn btn-soft rounded-pill px-3" href="{% url 'retailer_listing_csv_import' %}?pharmacy={{ pharmacy.id }}"><i class="bi bi-file-earmark-arrow-up me-1"></i> Import CSV file</a></div></div>
   {% if not pharmacy.verified %}<div class="alert alert-info"><i class="bi bi-info-circle me-2"></i>You can prepare your medicine inventory while verification is pending. Listings stay hidden from customers until an administrator approves your pharmacy.</div>{% endif %}
   <form method="post" enctype="multipart/form-data" class="mk-form-card" novalidate>
     {% csrf_token %}

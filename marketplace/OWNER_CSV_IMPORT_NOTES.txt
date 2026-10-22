@@ -1,0 +1,4 @@
+This feature is for pharmacy owners on the normal MedMitra site, not only Django Admin.
+It is registered at /retailer/listings/import-csv/ and exposed by buttons on:
+- marketplace/templates/marketplace/retailer_listings.html
+- marketplace/templates/marketplace/listing_form.html
