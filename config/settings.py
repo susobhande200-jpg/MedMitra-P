@@ -165,7 +165,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 
-# Cloudinary: uploaded medicine images and other user media
+# Cloudinary configuration for uploaded images
 CLOUDINARY_STORAGE = {
     "CLOUD_NAME": os.getenv("CLOUDINARY_CLOUD_NAME", ""),
     "API_KEY": os.getenv("CLOUDINARY_API_KEY", ""),
@@ -177,24 +177,20 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 
 # Storage configuration
-# User uploads go to Cloudinary.
-# Static assets use local storage during development
-# and compressed WhiteNoise storage in production.
+# Medicine images use Cloudinary.
+# Static files use Django's ordinary storage to avoid
+# manifest and compression failures during collection.
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": (
-            "django.contrib.staticfiles.storage.StaticFilesStorage"
-            if DEBUG
-            else "whitenoise.storage.CompressedStaticFilesStorage"
-        ),
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
 
 # Compatibility with django-cloudinary-storage's collectstatic command.
-STATICFILES_STORAGE = STORAGES["staticfiles"]["BACKEND"]
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -242,7 +238,7 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 
-# Email
+# Email configuration
 EMAIL_HOST = os.getenv("EMAIL_HOST", "")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() == "true"
