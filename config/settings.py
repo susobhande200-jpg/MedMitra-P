@@ -52,7 +52,7 @@ for host in ("localhost", "127.0.0.1"):
 
 # Applications
 INSTALLED_APPS = [
-    "cloudinary_storage",
+    "cloudinary_storage.apps.CloudinaryStorageConfig",
     "cloudinary",
     "jazzmin",
     "django.contrib.admin",
