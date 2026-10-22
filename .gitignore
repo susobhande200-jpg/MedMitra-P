@@ -11,3 +11,6 @@ media/
 
 # Customer payment proofs must remain private and outside public media.
 private_uploads/
+.env
+.env.*
+!.env.example
