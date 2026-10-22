@@ -32,7 +32,13 @@
 <a class="skip-link" href="#main-content">Skip to content</a>
 <nav class="navbar navbar-expand-lg site-nav sticky-top" aria-label="Main navigation">
  <div class="container">
-  <a class="navbar-brand brand" href="{% url 'home' %}" aria-label="MedMitra home"><span class="brand-mark"><i class="bi bi-capsule-pill"></i></span><span>Med<span class="brand-accent">Mitra</span></span></a>
+  <a class="navbar-brand brand" href="{% url 'home' %}" aria-label="MedMitra home"><span class="brand-mark">
+    <img
+        src="{% static 'images/medmitra-icon.png' %}"
+        alt="MedMitra"
+        class="brand-logo-icon"
+    >
+</span><span>Med<span class="brand-accent">Mitra</span></span></a>
   <div class="nav-quick d-flex align-items-center gap-2 ms-auto order-lg-2">
    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" aria-pressed="false" title="Switch theme"><i class="bi bi-moon-stars-fill" aria-hidden="true"></i><span class="theme-toggle-label">Dark mode</span></button>
    {% if user.is_authenticated %}
