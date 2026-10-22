@@ -20,12 +20,43 @@ class MedicineCategoryAdmin(admin.ModelAdmin):
     list_filter = ("active",)
 
 
+
 @admin.register(MedicineProduct)
 class MedicineProductAdmin(admin.ModelAdmin):
-    list_display = ("brand_name", "generic_name", "strength", "dosage_form", "category", "requires_prescription", "active")
+    list_display = (
+        "brand_name",
+        "generic_name",
+        "strength",
+        "dosage_form",
+        "category",
+        "requires_prescription",
+        "active",
+    )
+
+    list_editable = ("dosage_form",)
+
     search_fields = ("brand_name", "generic_name", "manufacturer")
-    fields = ("brand_name", "generic_name", "strength", "dosage_form", "pack_size", "manufacturer", "category", "description", "image", "requires_prescription", "active")
-    list_filter = ("category", "dosage_form", "requires_prescription", "active")
+
+    fields = (
+        "brand_name",
+        "generic_name",
+        "strength",
+        "dosage_form",
+        "pack_size",
+        "manufacturer",
+        "category",
+        "description",
+        "image",
+        "requires_prescription",
+        "active",
+    )
+
+    list_filter = (
+        "category",
+        "dosage_form",
+        "requires_prescription",
+        "active",
+    )
 
 
 @admin.register(Pharmacy)
