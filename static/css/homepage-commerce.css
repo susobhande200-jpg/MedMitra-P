@@ -1245,7 +1245,7 @@ html[data-theme="dark"] .mm-plus-banner {
     height: 110px;
   }
 }
-@media (max-width: 575.98px) {
+@media (max-width: 600px) {
   .mm-hero {
     padding: 33px 0 36px;
   }
@@ -1490,11 +1490,10 @@ html[data-theme="dark"] .mm-plus-banner {
     font-size: 0.73rem;
     padding: 10px 13px;
   }
-  .mm-image-strip-card {
-        width: 100%;
-        flex-basis: 100%;
-        aspect-ratio: 16 / 7;
-    }
+ .mm-image-strip-card {
+    width: 88vw;
+    height: 240px;
+  }
 
   .mm-difference-grid {
     grid-template-columns: 1fr;
