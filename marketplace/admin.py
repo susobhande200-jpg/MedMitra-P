@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.db.models import F, Q
+from django.utils import timezone
 from django import forms
 from django.urls import reverse
 from django.utils.html import format_html
@@ -304,63 +306,91 @@ class HomepageShowcaseProductAdminForm(forms.ModelForm):
         model = HomepageShowcaseProduct
         fields = "__all__"
 
-    def clean(self):
-        cleaned = super().clean()
+def clean(self):
+    cleaned = super().clean()
 
-        source = cleaned.get("source_type")
-        catalogue = cleaned.get("catalogue_product")
-        listing = cleaned.get("inventory_listing")
+    source = cleaned.get("source_type")
+    catalogue = cleaned.get("catalogue_product")
+    listing = cleaned.get("inventory_listing")
 
-        if source == "catalogue":
-            if not catalogue:
-                self.add_error(
-                    "catalogue_product",
-                    "Select a medicine from the catalogue.",
-                )
-            else:
-                cleaned["name"] = catalogue.brand_name
-                parts = [
-                    catalogue.generic_name,
-                    catalogue.strength,
-                    catalogue.pack_size,
-                ]
-                cleaned["subtitle"] = " · ".join(
-                    str(part).strip()
-                    for part in parts
-                    if part and str(part).strip()
-                )
+    # Only consider verified shops with active, available stock.
+    eligible_listings = PharmacyListing.objects.filter(
+        product__active=True,
+        active=True,
+        available_quantity__gt=F("reserved_quantity"),
+        selling_price__lte=F("mrp"),
+        pharmacy__verification_status=Pharmacy.VerificationStatus.APPROVED,
+    ).filter(
+        Q(expiry_date__isnull=True)
+        | Q(expiry_date__gte=timezone.localdate())
+    )
 
-        elif source == "inventory":
-            if not listing:
-                self.add_error(
-                    "inventory_listing",
-                    "Select a pharmacy inventory listing.",
-                )
-            else:
-                product = listing.product
-                cleaned["name"] = product.brand_name
+    if source == "catalogue":
+        if not catalogue:
+            self.add_error(
+                "catalogue_product",
+                "Select a medicine from the catalogue.",
+            )
+            return cleaned
 
-                parts = [
-                    product.generic_name,
-                    product.strength,
-                    product.pack_size,
-                    listing.pharmacy.name,
-                ]
-                cleaned["subtitle"] = " · ".join(
-                    str(part).strip()
-                    for part in parts
-                    if part and str(part).strip()
-                )
+        # Pick one eligible pharmacy listing at random.
+        listing = (
+            eligible_listings
+            .filter(product=catalogue)
+            .order_by("?")
+            .first()
+        )
 
-                # Copy the selected listing's prices when saving.
-                cleaned["mrp"] = listing.mrp
-                cleaned["price"] = listing.selling_price
-                cleaned["is_sample"] = False
+        if not listing:
+            self.add_error(
+                "catalogue_product",
+                "No approved pharmacy currently has this medicine in stock.",
+            )
+            return cleaned
 
-        elif not (cleaned.get("name") or "").strip():
+        cleaned["inventory_listing"] = listing
+
+    elif source == "inventory":
+        if not listing:
+            self.add_error(
+                "inventory_listing",
+                "Select a pharmacy inventory listing.",
+            )
+            return cleaned
+
+        if not eligible_listings.filter(pk=listing.pk).exists():
+            self.add_error(
+                "inventory_listing",
+                "Choose an approved shop listing with available, unexpired stock.",
+            )
+            return cleaned
+
+    if source in ("catalogue", "inventory") and listing:
+        product = listing.product
+
+        cleaned["name"] = product.brand_name
+        parts = [
+            product.generic_name,
+            product.strength,
+            product.pack_size,
+            listing.pharmacy.name,
+        ]
+        cleaned["subtitle"] = " · ".join(
+            str(part).strip()
+            for part in parts
+            if part and str(part).strip()
+        )
+
+        # Use the selected shop's genuine prices.
+        cleaned["mrp"] = listing.mrp
+        cleaned["price"] = listing.selling_price
+        cleaned["is_sample"] = False
+
+    elif source == "manual":
+        if not (cleaned.get("name") or "").strip():
             self.add_error("name", "Enter a product name.")
 
-        return cleaned
+    return cleaned
 
 @admin.register(HomepageShowcaseProduct)
 class HomepageShowcaseProductAdmin(SuperuserOnlyModelAdmin):
