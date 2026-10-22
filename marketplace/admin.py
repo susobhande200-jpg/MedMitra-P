@@ -306,91 +306,87 @@ class HomepageShowcaseProductAdminForm(forms.ModelForm):
         model = HomepageShowcaseProduct
         fields = "__all__"
 
-def clean(self):
-    cleaned = super().clean()
+    def clean(self):
+        cleaned = super().clean()
 
-    source = cleaned.get("source_type")
-    catalogue = cleaned.get("catalogue_product")
-    listing = cleaned.get("inventory_listing")
+        source = cleaned.get("source_type")
+        catalogue = cleaned.get("catalogue_product")
+        listing = cleaned.get("inventory_listing")
 
-    # Only consider verified shops with active, available stock.
-    eligible_listings = PharmacyListing.objects.filter(
-        product__active=True,
-        active=True,
-        available_quantity__gt=F("reserved_quantity"),
-        selling_price__lte=F("mrp"),
-        pharmacy__verification_status=Pharmacy.VerificationStatus.APPROVED,
-    ).filter(
-        Q(expiry_date__isnull=True)
-        | Q(expiry_date__gte=timezone.localdate())
-    )
-
-    if source == "catalogue":
-        if not catalogue:
-            self.add_error(
-                "catalogue_product",
-                "Select a medicine from the catalogue.",
-            )
-            return cleaned
-
-        # Pick one eligible pharmacy listing at random.
-        listing = (
-            eligible_listings
-            .filter(product=catalogue)
-            .order_by("?")
-            .first()
+        eligible = PharmacyListing.objects.filter(
+            active=True,
+            product__active=True,
+            pharmacy__verification_status=(
+                Pharmacy.VerificationStatus.APPROVED
+            ),
+            available_quantity__gt=F("reserved_quantity"),
+            selling_price__lte=F("mrp"),
+        ).filter(
+            Q(expiry_date__isnull=True)
+            | Q(expiry_date__gte=timezone.localdate())
         )
 
-        if not listing:
-            self.add_error(
-                "catalogue_product",
-                "No approved pharmacy currently has this medicine in stock.",
+        if source == "catalogue":
+            if not catalogue:
+                self.add_error(
+                    "catalogue_product",
+                    "Select a medicine from the catalogue.",
+                )
+                return cleaned
+
+            listing = (
+                eligible.filter(product=catalogue)
+                .order_by("?")
+                .first()
             )
-            return cleaned
 
-        cleaned["inventory_listing"] = listing
+            if not listing:
+                self.add_error(
+                    "catalogue_product",
+                    "No approved pharmacy currently has this medicine in stock.",
+                )
+                return cleaned
 
-    elif source == "inventory":
-        if not listing:
-            self.add_error(
-                "inventory_listing",
-                "Select a pharmacy inventory listing.",
+            cleaned["inventory_listing"] = listing
+
+        elif source == "inventory":
+            if not listing:
+                self.add_error(
+                    "inventory_listing",
+                    "Select a pharmacy inventory listing.",
+                )
+                return cleaned
+
+            if not eligible.filter(pk=listing.pk).exists():
+                self.add_error(
+                    "inventory_listing",
+                    "Select an approved listing with available, unexpired stock.",
+                )
+                return cleaned
+
+        if source in ("catalogue", "inventory") and listing:
+            product = listing.product
+
+            cleaned["name"] = product.brand_name
+            cleaned["subtitle"] = " · ".join(
+                str(value).strip()
+                for value in (
+                    product.generic_name,
+                    product.strength,
+                    product.pack_size,
+                    listing.pharmacy.name,
+                )
+                if value and str(value).strip()
             )
-            return cleaned
 
-        if not eligible_listings.filter(pk=listing.pk).exists():
-            self.add_error(
-                "inventory_listing",
-                "Choose an approved shop listing with available, unexpired stock.",
-            )
-            return cleaned
+            # Store the chosen listing; the template reads its live prices.
+            cleaned["is_sample"] = False
 
-    if source in ("catalogue", "inventory") and listing:
-        product = listing.product
+        elif source == "manual":
+            if not (cleaned.get("name") or "").strip():
+                self.add_error("name", "Enter a product name.")
 
-        cleaned["name"] = product.brand_name
-        parts = [
-            product.generic_name,
-            product.strength,
-            product.pack_size,
-            listing.pharmacy.name,
-        ]
-        cleaned["subtitle"] = " · ".join(
-            str(part).strip()
-            for part in parts
-            if part and str(part).strip()
-        )
-
-        # Use the selected shop's genuine prices.
-        cleaned["mrp"] = listing.mrp
-        cleaned["price"] = listing.selling_price
-        cleaned["is_sample"] = False
-
-    elif source == "manual":
-        if not (cleaned.get("name") or "").strip():
-            self.add_error("name", "Enter a product name.")
-
-    return cleaned
+        return cleaned
 
 @admin.register(HomepageShowcaseProduct)
 class HomepageShowcaseProductAdmin(SuperuserOnlyModelAdmin):

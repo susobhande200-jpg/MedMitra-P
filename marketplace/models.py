@@ -822,16 +822,101 @@ class HomepageShowcaseProduct(models.Model):
                         "Select a pharmacy inventory listing."
                     )
                 })
+    @property
+    def linked_listing(self):
+        if self.inventory_listing_id:
+            return self.inventory_listing
+        return None
+
+    @property
+    def linked_product(self):
+        listing = self.linked_listing
+
+        if listing:
+            return listing.product
+
+        if self.catalogue_product_id:
+            return self.catalogue_product
+
+        return None
+
+    @property
+    def display_name(self):
+        product = self.linked_product
+        if product:
+            return product.brand_name
+        return self.name
+
+    @property
+    def display_subtitle(self):
+        product = self.linked_product
+        listing = self.linked_listing
+
+        if not product:
+            return self.subtitle
+
+        details = [
+            product.generic_name,
+            product.strength,
+            product.get_dosage_form_display(),
+            product.pack_size,
+        ]
+
+        if listing:
+            details.append(listing.pharmacy.name)
+
+        return " · ".join(
+            str(value).strip()
+            for value in details
+            if value and str(value).strip()
+        )
+
+    @property
+    def display_image(self):
+        listing = self.linked_listing
+        product = self.linked_product
+
+        # Prefer the selected shop's product photo.
+        if listing and listing.image:
+            return listing.image
+
+        # Otherwise use the main catalogue product's image.
+        if product and product.image:
+            return product.image
+
+        # Manual image is only a fallback.
+        if self.image:
+            return self.image
+
+        return None
+
+    @property
+    def display_price(self):
+        listing = self.linked_listing
+
+        if listing:
+            return listing.selling_price
+
+        return self.price
+
+    @property
+    def display_mrp(self):
+        listing = self.linked_listing
+
+        if listing:
+            return listing.mrp
+
+        return self.mrp          
 
     @property
     def discount_percent(self):
-        if not self.price or not self.mrp or self.price >= self.mrp:
+        price = self.display_price
+        mrp = self.display_mrp
+
+        if price is None or mrp is None or mrp <= price:
             return 0
 
-        return int(((self.mrp - self.price) / self.mrp) * 100)
-
-    def __str__(self):
-        return self.name
+        return int(((mrp - price) / mrp) * 100)
 
 
 class HomepageMembershipBanner(models.Model):
