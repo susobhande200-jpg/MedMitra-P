@@ -296,20 +296,124 @@ class HomepageCategoryTileAdmin(SuperuserOnlyModelAdmin):
         ("Display", {"fields": ("is_active", "sort_order")}),
         ("Audit", {"fields": ("created_at", "updated_at")}),
     )
+class HomepageShowcaseProductAdminForm(forms.ModelForm):
+    # A product name can be filled automatically from a selection.
+    name = forms.CharField(required=False)
 
+    class Meta:
+        model = HomepageShowcaseProduct
+        fields = "__all__"
+
+    def clean(self):
+        cleaned = super().clean()
+
+        source = cleaned.get("source_type")
+        catalogue = cleaned.get("catalogue_product")
+        listing = cleaned.get("inventory_listing")
+
+        if source == "catalogue":
+            if not catalogue:
+                self.add_error(
+                    "catalogue_product",
+                    "Select a medicine from the catalogue.",
+                )
+            else:
+                cleaned["name"] = catalogue.brand_name
+                parts = [
+                    catalogue.generic_name,
+                    catalogue.strength,
+                    catalogue.pack_size,
+                ]
+                cleaned["subtitle"] = " · ".join(
+                    str(part).strip()
+                    for part in parts
+                    if part and str(part).strip()
+                )
+
+        elif source == "inventory":
+            if not listing:
+                self.add_error(
+                    "inventory_listing",
+                    "Select a pharmacy inventory listing.",
+                )
+            else:
+                product = listing.product
+                cleaned["name"] = product.brand_name
+
+                parts = [
+                    product.generic_name,
+                    product.strength,
+                    product.pack_size,
+                    listing.pharmacy.name,
+                ]
+                cleaned["subtitle"] = " · ".join(
+                    str(part).strip()
+                    for part in parts
+                    if part and str(part).strip()
+                )
+
+                # Copy the selected listing's prices when saving.
+                cleaned["mrp"] = listing.mrp
+                cleaned["price"] = listing.selling_price
+                cleaned["is_sample"] = False
+
+        elif not (cleaned.get("name") or "").strip():
+            self.add_error("name", "Enter a product name.")
+
+        return cleaned
 
 @admin.register(HomepageShowcaseProduct)
 class HomepageShowcaseProductAdmin(SuperuserOnlyModelAdmin):
-    list_display = ("name", "section", "mrp", "price", "is_sample", "is_active", "sort_order")
+    form = HomepageShowcaseProductAdminForm
+
+    list_display = (
+        "name",
+        "section",
+        "mrp",
+        "price",
+        "is_sample",
+        "is_active",
+        "sort_order",
+    )
+
     list_filter = ("section", "is_sample", "is_active")
     search_fields = ("name", "subtitle")
     list_editable = ("is_active", "sort_order")
     readonly_fields = ("created_at", "updated_at")
+
+    autocomplete_fields = (
+        "catalogue_product",
+        "inventory_listing",
+    )
+
     fieldsets = (
-        ("Product card", {"fields": ("section", "name", "subtitle", "image", "target_url")}),
-        ("Price display", {"fields": ("mrp", "price", "is_sample")}),
-        ("Publishing", {"fields": ("is_active", "sort_order")}),
-        ("Audit", {"fields": ("created_at", "updated_at")}),
+        (
+            "Product card",
+            {
+                "fields": (
+                    "section",
+                    "source_type",
+                    "catalogue_product",
+                    "inventory_listing",
+                    "name",
+                    "subtitle",
+                    "image",
+                    "target_url",
+                )
+            },
+        ),
+        (
+            "Price display",
+            {"fields": ("mrp", "price", "is_sample")},
+        ),
+        (
+            "Publishing",
+            {"fields": ("is_active", "sort_order")},
+        ),
+        (
+            "Audit",
+            {"fields": ("created_at", "updated_at")},
+        ),
     )
 
 

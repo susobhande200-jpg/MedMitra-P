@@ -696,20 +696,96 @@ class HomepageCategoryTile(models.Model):
 
 
 class HomepageShowcaseProduct(models.Model):
-    """Curated homepage catalog cards. Demo entries must be verified before real sale claims."""
+    """Curated homepage product cards linked to the catalogue or pharmacy listings."""
 
     class Section(models.TextChoices):
         NEW_LAUNCHES = "new_launches", "New launches"
         TRENDING = "trending", "Trending near you"
 
-    section = models.CharField(max_length=20, choices=Section.choices, db_index=True)
+    class SourceType(models.TextChoices):
+        MANUAL = "manual", "Manual entry"
+        CATALOGUE = "catalogue", "Medicine catalogue"
+        INVENTORY = "inventory", "Pharmacy inventory"
+
+    # Homepage section
+    section = models.CharField(
+        max_length=20,
+        choices=Section.choices,
+        db_index=True,
+    )
+
+    # Choose where the featured product comes from
+    source_type = models.CharField(
+        max_length=20,
+        choices=SourceType.choices,
+        default=SourceType.MANUAL,
+    )
+
+    # Select a product from the main medicine catalogue
+    catalogue_product = models.ForeignKey(
+        "marketplace.MedicineProduct",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="homepage_showcase_products",
+        verbose_name="Select from medicine catalogue",
+    )
+
+    # Select a pharmacy-specific listing with its own price and stock
+    inventory_listing = models.ForeignKey(
+        "marketplace.PharmacyListing",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="homepage_showcase_products",
+        verbose_name="Select from pharmacy inventory",
+    )
+
+    # Existing product-card fields
     name = models.CharField(max_length=220)
     subtitle = models.CharField(max_length=240, blank=True)
-    image = models.ImageField(upload_to="homepage/products/", blank=True, help_text="Optional product image. Shop-specific images can also be uploaded on a pharmacy listing.")
-    mrp = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal("0.01"))])
-    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal("0.01"))])
-    target_url = models.CharField(max_length=500, blank=True, validators=[validate_homepage_link])
-    is_sample = models.BooleanField(default=False, help_text="Show a sample-price label; enable this for unverified/demo catalogue data.")
+
+    image = models.ImageField(
+        upload_to="homepage/products/",
+        blank=True,
+        help_text=(
+            "Optional product image. "
+            "Shop-specific images can also be uploaded on a pharmacy listing."
+        ),
+    )
+
+    # Existing price-display fields
+    mrp = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(Decimal("0.01"))],
+    )
+
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(Decimal("0.01"))],
+    )
+
+    target_url = models.CharField(
+        max_length=500,
+        blank=True,
+        validators=[validate_homepage_link],
+    )
+
+    is_sample = models.BooleanField(
+        default=False,
+        help_text=(
+            "Show a sample-price label; enable this for "
+            "unverified/demo catalogue data."
+        ),
+    )
+
+    # Existing publishing fields
     is_active = models.BooleanField(default=True)
     sort_order = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -722,14 +798,36 @@ class HomepageShowcaseProduct(models.Model):
 
     def clean(self):
         super().clean()
-        if self.price is not None and self.mrp is not None and self.price > self.mrp:
-            from django.core.exceptions import ValidationError
-            raise ValidationError({"price": "Price cannot be higher than MRP."})
+
+        from django.core.exceptions import ValidationError
+
+        if self.price is not None and self.mrp is not None:
+            if self.price > self.mrp:
+                raise ValidationError({
+                    "price": "Price cannot be higher than MRP."
+                })
+
+        if self.source_type == self.SourceType.CATALOGUE:
+            if not self.catalogue_product:
+                raise ValidationError({
+                    "catalogue_product": (
+                        "Select a medicine from the catalogue."
+                    )
+                })
+
+        elif self.source_type == self.SourceType.INVENTORY:
+            if not self.inventory_listing:
+                raise ValidationError({
+                    "inventory_listing": (
+                        "Select a pharmacy inventory listing."
+                    )
+                })
 
     @property
     def discount_percent(self):
         if not self.price or not self.mrp or self.price >= self.mrp:
             return 0
+
         return int(((self.mrp - self.price) / self.mrp) * 100)
 
     def __str__(self):
