@@ -1,0 +1,74 @@
+/* Dark-only refinement. Light mode remains governed by the existing light theme. */
+html[data-theme="dark"] {
+  color-scheme: dark !important;
+  --mk-bg: #0d1718;
+  --mk-card: #142322;
+  --mk-card-2: #1a302d;
+  --mk-ink: #edf7f4;
+  --mk-muted: #a9c0ba;
+  --mk-border: #2d4842;
+  --mk-soft: #1d3a34;
+  --mk-accent: #67dcc5;
+  --mk-accent-2: #8ae8d5;
+  --mk-glow: rgba(103,220,197,.14);
+  --mk-shadow: 0 10px 30px rgba(0,0,0,.22);
+  --mk-shadow-hover: 0 18px 40px rgba(0,0,0,.34);
+  background: var(--mk-bg) !important;
+}
+html[data-theme="dark"] body { background: var(--mk-bg) !important; color: var(--mk-ink) !important; }
+html[data-theme="dark"] main { background: transparent; }
+html[data-theme="dark"] .mm-section,
+html[data-theme="dark"] .mm-product-section,
+html[data-theme="dark"] .mk-form-page,
+html[data-theme="dark"] .mk-dashboard-page,
+html[data-theme="dark"] .mk-section,
+html[data-theme="dark"] .mk-how-section { background-color: var(--mk-bg) !important; color: var(--mk-ink); }
+html[data-theme="dark"] .mm-section-soft,
+html[data-theme="dark"] .mm-category-section,
+html[data-theme="dark"] .mm-reviews-section { background: #101e1e !important; }
+html[data-theme="dark"] .mm-section-heading h2,
+html[data-theme="dark"] .mm-category-name,
+html[data-theme="dark"] .mm-product-card h3,
+html[data-theme="dark"] .mm-review-author strong,
+html[data-theme="dark"] .mk-form-intro h1,
+html[data-theme="dark"] .mk-form-card h2,
+html[data-theme="dark"] .mk-panel-card h2,
+html[data-theme="dark"] .mk-panel-card h3,
+html[data-theme="dark"] .mk-dashboard-heading h1,
+html[data-theme="dark"] .form-label,
+html[data-theme="dark"] .form-check-label,
+html[data-theme="dark"] label { color: var(--mk-ink) !important; }
+html[data-theme="dark"] .mm-product-card,
+html[data-theme="dark"] .mm-review-card,
+html[data-theme="dark"] .mm-category-tile,
+html[data-theme="dark"] .mm-editorial-card,
+html[data-theme="dark"] .mm-plus-banner,
+html[data-theme="dark"] .mk-form-card,
+html[data-theme="dark"] .mk-panel-card,
+html[data-theme="dark"] .mk-order-summary,
+html[data-theme="dark"] .mk-order-card,
+html[data-theme="dark"] .mk-cart-store-card,
+html[data-theme="dark"] .profile-card,
+html[data-theme="dark"] .profile-panel { background: var(--mk-card) !important; border-color: var(--mk-border) !important; color: var(--mk-ink) !important; }
+html[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .form-select { background-color: #10201f !important; border-color: #35544c !important; color: var(--mk-ink) !important; }
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder { color: #9bb5ad !important; }
+html[data-theme="dark"] .form-check-input[type="checkbox"],
+html[data-theme="dark"] .form-check-input[type="radio"] { background-color: #152b28 !important; border-color: #71968b !important; accent-color: #67dcc5 !important; }
+html[data-theme="dark"] .form-check-input[type="checkbox"]:checked,
+html[data-theme="dark"] .form-check-input[type="radio"]:checked { background-color: #168c7e !important; border-color: #67dcc5 !important; }
+html[data-theme="dark"] .form-text,
+html[data-theme="dark"] .text-muted,
+html[data-theme="dark"] .mk-muted,
+html[data-theme="dark"] small { color: #a9c0ba; }
+html[data-theme="dark"] .alert-info { background: #142d32 !important; border-color: #2e5960 !important; color: #c8f0ee !important; }
+html[data-theme="dark"] .table { --bs-table-bg: #142322; --bs-table-color: #edf7f4; --bs-table-border-color: #2d4842; }
+html[data-theme="dark"] .btn-light,
+html[data-theme="dark"] .btn-soft { background: #203c36 !important; border-color: #3d6559 !important; color: #edf7f4 !important; }
+html[data-theme="dark"] .mm-add-product-toggle { background: var(--mk-card) !important; border-color: var(--mk-border) !important; }
+html[data-theme="dark"] .mm-add-product-toggle small { color: var(--mk-muted) !important; }
+html[data-theme="dark"] .mm-offer-image-only { background: #142322; border-color: var(--mk-border); }

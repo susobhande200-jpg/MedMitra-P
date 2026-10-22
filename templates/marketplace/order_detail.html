@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}Order {{ order.reference }} — MedMitra{% endblock %}
+{% block content %}
+<section class="mk-dashboard-page">
+  <div class="container">
+    <div class="mk-dashboard-heading">
+      <div>
+        <div class="mk-section-kicker">ORDER TRACKING</div>
+        <div class="mm-print-receipt-label">MedMitra {% if order.payment_status == 'collected' or order.payment_status == 'paid' %}Payment Receipt{% else %}Order Receipt{% endif %}</div>
+        <h1>Order <span class="mk-gradient-text">{{ order.reference }}</span></h1>
+        <p>Submitted {{ order.created_at|date:"d M Y, g:i A" }} · {{ order.pharmacy.name }}</p>
+      </div>
+      <span class="status-badge status-{{ order.status }} order-detail-status">{{ order.get_status_display }}</span>
+    </div>
+
+    {% if order.status == 'refund_pending' %}<div class="alert alert-warning"><strong>Refund pending.</strong> The order has a recorded online payment and has been cancelled/rejected. Refund handling is manual; no refund has been sent automatically.</div>{% endif %}
+    {% if order_terminal_status %}
+      <div class="mm-order-terminal-status"><i class="bi bi-info-circle"></i><div><strong>Order status: {{ order_terminal_status }}</strong><span>This request is no longer moving through the normal fulfilment steps. Contact the pharmacy or support for clarification.</span></div></div>
+    {% else %}
+      <section class="mm-order-progress-panel" aria-label="Order progress">
+        <div class="mm-order-progress-heading"><strong>Track your order</strong><span>Current status: {{ order.get_status_display }}</span></div>
+        <div class="mm-order-progress-track">
+          {% for step in order_progress_steps %}<div class="mm-order-progress-step is-{{ step.state }}"><span class="mm-order-progress-dot">{% if step.state == 'done' %}<i class="bi bi-check-lg"></i>{% elif step.state == 'current' %}<i class="bi bi-record-circle"></i>{% else %}<i class="bi bi-circle"></i>{% endif %}</span><strong>{{ step.label }}</strong></div>{% endfor %}
+        </div>
+        {% if order.fulfilment == 'pickup' and order.status == 'ready' %}<p class="mb-0 mt-3"><i class="bi bi-shop me-1"></i>Your medicines are marked ready. Please collect them from {{ order.pharmacy.name }}.</p>{% elif order.fulfilment == 'delivery' and order.status == 'out_for_delivery' %}<p class="mb-0 mt-3"><i class="bi bi-truck me-1"></i>Your order is marked out for delivery by the pharmacy. This page shows status updates, not live GPS tracking.</p>{% endif %}
+      </section>
+    {% endif %}
+
+    {% if owner_access %}
+      <section class="mk-panel-card mm-retailer-order-manager mt-4" id="retailer-order-manager" aria-labelledby="retailer-order-manager-title">
+        <div class="mk-panel-heading">
+          <div><h2 id="retailer-order-manager-title"><i class="bi bi-sliders2-vertical me-2"></i>Manage this order</h2><p>Retailer actions for {{ order.pharmacy.name }}. Payment state and fulfilment state are handled separately.</p></div>
+          <a class="btn btn-sm btn-soft rounded-pill" href="{% url 'retailer_orders' %}?pharmacy={{ order.pharmacy_id }}">All orders</a>
+        </div>
+        <div class="mm-retailer-order-manager-body">
+          <div class="mm-retailer-order-summary-row"><span>Order status</span><span class="status-badge status-{{ order.status }}">{{ order.get_status_display }}</span></div>
+          <div class="mm-retailer-order-summary-row"><span>Payment status</span><strong>{{ order.get_payment_status_display }}</strong></div>
+          {% if order.status == 'pending' %}
+            {% if retailer_accept_block_reason %}<div class="alert alert-warning my-3 mb-0"><i class="bi bi-shield-exclamation me-1"></i>{{ retailer_accept_block_reason }}{% if can_review_payment_proof %} <a href="#payment-proof-panel">Review payment proof</a>{% endif %}{% if has_prescription_items and order.prescription and not prescription_approved %} <a href="#prescription-review-panel">Review prescription</a>{% endif %}</div>{% endif %}
+            <div class="mm-retailer-order-manager-actions mt-3">
+              {% if can_retailer_accept_order %}<form method="post" action="{% url 'retailer_order_status' order.pk %}">{% csrf_token %}<input type="hidden" name="return_to" value="detail"><button name="status" value="accepted" class="btn btn-primary rounded-pill" type="submit"><i class="bi bi-check-circle me-1"></i>Accept order</button></form>{% endif %}
+              {% if can_retailer_reject_order %}<form method="post" action="{% url 'retailer_order_status' order.pk %}">{% csrf_token %}<input type="hidden" name="return_to" value="detail"><button name="status" value="rejected" class="btn btn-outline-danger rounded-pill" type="submit" data-confirm="{% if order.payment_status == 'paid' %}Reject this paid order? It will become refund pending and require manual refund handling.{% else %}Reject this order and release its reserved stock?{% endif %}"><i class="bi bi-x-circle me-1"></i>{% if order.payment_status == 'paid' %}Reject / request refund{% else %}Reject order{% endif %}</button></form>{% elif order.payment_status == 'proof_submitted' %}<a class="btn btn-primary rounded-pill" href="#payment-proof-panel"><i class="bi bi-qr-code me-1"></i>Review payment proof</a>{% endif %}
+            </div>
+          {% elif order.status == 'accepted' %}
+            <p class="small text-muted mt-3 mb-0">The order is accepted. Start preparing it when the pharmacy is ready.</p><div class="mm-retailer-order-manager-actions mt-3"><form method="post" action="{% url 'retailer_order_status' order.pk %}">{% csrf_token %}<input type="hidden" name="return_to" value="detail"><button name="status" value="processing" class="btn btn-primary rounded-pill" type="submit"><i class="bi bi-box-seam me-1"></i>Start processing</button></form></div>
+          {% elif order.status == 'processing' %}
+            <p class="small text-muted mt-3 mb-0">Update the customer when the medicines are ready or leave the pharmacy.</p><div class="mm-retailer-order-manager-actions mt-3"><form method="post" action="{% url 'retailer_order_status' order.pk %}">{% csrf_token %}<input type="hidden" name="return_to" value="detail"><button name="status" value="{% if order.fulfilment == 'delivery' %}out_for_delivery{% else %}ready{% endif %}" class="btn btn-primary rounded-pill" type="submit"><i class="bi {% if order.fulfilment == 'delivery' %}bi-truck{% else %}bi-bag-check{% endif %} me-1"></i>{% if order.fulfilment == 'delivery' %}Mark out for delivery{% else %}Mark ready for pickup{% endif %}</button></form></div>
+          {% elif order.status == 'ready' or order.status == 'out_for_delivery' %}
+            <p class="small text-muted mt-3 mb-0">Complete the order only after pickup or delivery has actually happened.</p><div class="mm-retailer-order-manager-actions mt-3"><form method="post" action="{% url 'retailer_order_status' order.pk %}">{% csrf_token %}<input type="hidden" name="return_to" value="detail"><button name="status" value="completed" class="btn btn-primary rounded-pill" type="submit" data-confirm="Confirm that the customer received the order?"><i class="bi bi-check2-circle me-1"></i>Mark completed</button></form></div>
+          {% else %}<p class="small text-muted mt-3 mb-0">No further fulfilment actions are available for this order status.</p>{% endif %}
+          {% if can_collect_payment %}<form class="mm-collect-cash-form mt-3" method="post" action="{% url 'retailer_mark_payment_collected' order.pk %}">{% csrf_token %}<strong>Record payment received</strong><p>Only confirm after actually receiving cash or the agreed offline payment.</p><button type="submit" class="btn btn-success rounded-pill" data-confirm="Confirm that payment has actually been received from the customer?">Mark payment collected</button></form>{% endif %}
+          {% if can_review_payment_proof %}<div class="alert alert-info mt-3 mb-0"><i class="bi bi-qr-code-scan me-1"></i>Customer payment proof is waiting for review. <a href="#payment-proof-panel">Approve or reject proof</a> before accepting the order.</div>{% endif %}
+        </div>
+      </section>
+    {% endif %}
+
+    <div class="row g-4 mt-1">
+      <div class="col-lg-8">
+        <section class="mk-panel-card">
+          <div class="mk-panel-heading"><div><h2>Order progress</h2><p>Status changes are recorded by the customer or pharmacy account.</p></div></div>
+          <div class="order-timeline">
+            {% for event in order.status_events.all %}<div class="timeline-event"><span class="timeline-dot"></span><div><strong>{% if event.new_status == 'pending' %}Request submitted{% else %}{{ event.get_new_status_display|default:event.new_status|title }}{% endif %}</strong><small>{{ event.created_at|date:"d M Y · g:i A" }} · {{ event.actor.get_full_name|default:event.actor.username }}</small>{% if event.note %}<p>{{ event.note }}</p>{% endif %}</div></div>{% empty %}<p class="text-muted">Your order updates will appear here.</p>{% endfor %}
+          </div>
+          {% if order.status == 'pending' and not owner_access and order.payment_status != 'paid' and order.payment_status != 'proof_submitted' %}<form method="post" action="{% url 'customer_cancel_order' order.pk %}" class="mt-4">{% csrf_token %}<button class="btn btn-outline-danger rounded-pill" data-confirm="Cancel this pending request and release its stock reservation?" type="submit">Cancel order request</button></form>{% endif %}
+        </section>
+        <section class="mk-panel-card mt-4">
+          <div class="mk-panel-heading"><div><h2>Items ordered</h2><p>Prices are snapshotted at the time the request is made.</p></div></div>
+          <div class="order-items-full">{% for item in order.items.all %}<div class="order-item-full"><span class="cart-product-icon"><i class="bi bi-capsule-pill"></i></span><div><strong>{{ item.product_name_snapshot }}</strong><small>Qty {{ item.quantity }} · ₹{{ item.unit_price|floatformat:2 }} each</small></div><strong class="ms-auto">₹{{ item.subtotal|floatformat:2 }}</strong></div>{% endfor %}</div>
+        </section>
+
+        {% if order.prescription %}<section class="mk-panel-card mt-4" id="prescription-review-panel"><div class="mk-panel-heading"><div><h2>Prescription review</h2><p>Private access is restricted to the customer, administrator and assigned pharmacy.</p></div><span class="status-badge status-{{ order.prescription.status }}">{{ order.prescription.get_status_display }}</span></div><p>{{ order.prescription.review_note|default:"No reviewer note provided." }}</p><div class="d-flex flex-wrap gap-2"><a class="btn btn-soft rounded-pill" href="{% url 'prescription_download' order.prescription.pk %}"><i class="bi bi-download me-1"></i> Download securely</a></div>{% if owner_access and order.prescription.status == 'pending' or owner_access and order.prescription.status == 'clarification' %}<form method="post" action="{% url 'prescription_review' order.prescription.pk %}" class="mm-order-prescription-review mt-3">{% csrf_token %}<input type="hidden" name="return_to" value="detail"><input type="hidden" name="return_reference" value="{{ order.reference }}"><label class="form-label" for="order-prescription-review-note">Review note (optional)</label><textarea id="order-prescription-review-note" name="review_note" class="form-control mb-3" rows="2" maxlength="500" placeholder="What needs correcting, if anything?"></textarea><div class="d-flex flex-wrap gap-2"><button name="status" value="approved" type="submit" class="btn btn-success rounded-pill"><i class="bi bi-check-circle me-1"></i>Approve prescription</button><button name="status" value="clarification" type="submit" class="btn btn-outline-secondary rounded-pill">Request details</button><button name="status" value="rejected" type="submit" class="btn btn-outline-danger rounded-pill" data-confirm="Reject this prescription review?">Reject prescription</button></div></form>{% endif %}</section>{% endif %}
+
+        {% if show_qr_payment %}
+          <section class="mk-panel-card mt-4 mm-payment-online-panel" id="payment-proof-panel">
+            <div class="mk-panel-heading"><div><h2><i class="bi bi-qr-code-scan me-2"></i>Pay by pharmacy QR / bank transfer</h2><p>Pay exactly the order total to {{ order.pharmacy.name }}, then upload your receipt for verification.</p></div><span class="status-badge {% if order.payment_status == 'paid' %}status-completed{% elif order.payment_status == 'proof_submitted' %}status-processing{% else %}status-pending{% endif %}">{{ order.get_payment_status_display }}</span></div>
+            {% if order.payment_status == 'paid' %}
+              {% if order.status == 'refund_pending' or order.status == 'refunded' %}<div class="alert alert-warning mb-0"><strong>Payment verified; refund follow-up required.</strong> The order is no longer proceeding to fulfilment. Refund processing is manual.</div>{% else %}<div class="alert alert-success mb-0"><strong>Payment verified.</strong> {% if order.payment_verified_at %}Verified {{ order.payment_verified_at|date:"d M Y, g:i A" }}.{% endif %} Your order can now proceed to pharmacy confirmation.</div>{% endif %}
+            {% else %}
+              {% if payment_qr_settings %}
+                <div class="mm-qr-payment-content">
+                  {% if payment_qr_settings.qr_image %}<div class="mm-payment-qr-image"><img src="{{ payment_qr_settings.qr_image.url }}" alt="{{ payment_qr_settings.display_name }} payment QR code" loading="lazy"></div>{% endif %}
+                  <div class="mm-payment-qr-instructions"><strong>{{ payment_qr_settings.display_name }}</strong><div class="mm-payment-amount">₹{{ order.total|floatformat:2 }}</div>{% if payment_qr_settings.upi_id %}<p class="mb-2">UPI ID: <code>{{ payment_qr_settings.upi_id }}</code></p>{% endif %}{% if payment_qr_settings.bank_account_name %}<div class="small mb-2"><strong>Bank transfer details</strong><br>Account name: {{ payment_qr_settings.bank_account_name }}<br>Bank: {{ payment_qr_settings.bank_name }}<br>Account number: <code>{{ payment_qr_settings.bank_account_number }}</code><br>IFSC: <code>{{ payment_qr_settings.bank_ifsc_code }}</code></div>{% endif %}<p>{{ payment_qr_settings.instructions }}</p><p class="small text-muted">Payment is not treated as complete until the receiving pharmacy or administrator verifies the transfer.</p></div>
+                </div>
+              {% else %}
+                <div class="alert alert-warning">This pharmacy has not configured QR / UPI or bank transfer details. Do not send money to an unverified account. Contact the pharmacy and ask them to configure their payment details.</div>
+              {% endif %}
+              {% if order.payment_status == 'proof_submitted' %}
+                <div class="alert alert-info mt-3 mb-0"><strong>Proof submitted — awaiting verification.</strong> The order remains unpaid until the pharmacy verifies receipt of funds. {% if order.payment_reference %}<br>Reference: {{ order.payment_reference }}{% endif %}</div>
+              {% elif order.payment_status == 'proof_rejected' %}
+                <div class="alert alert-warning mt-3"><strong>Payment proof needs attention.</strong> {{ order.payment_review_note }}</div>
+              {% endif %}
+              {% if can_upload_payment_proof %}
+                <form method="post" enctype="multipart/form-data" action="{% url 'payment_proof_upload' order.reference %}" class="mm-payment-proof-form mt-3">{% csrf_token %}<h3>Upload payment proof</h3><div class="mb-3"><label class="form-label" for="id_payment_proof">{{ payment_proof_form.payment_proof.label }}</label>{{ payment_proof_form.payment_proof }}<small class="form-text d-block">{{ payment_proof_form.payment_proof.help_text }}</small></div><div class="mb-3"><label class="form-label" for="id_payment_reference">{{ payment_proof_form.payment_reference.label }}</label>{{ payment_proof_form.payment_reference }}</div><button type="submit" class="btn btn-primary rounded-pill">Submit proof for verification</button></form>
+              {% endif %}
+            {% endif %}
+            {% if can_view_payment_proof %}<p class="mt-3 mb-0"><a class="btn btn-soft rounded-pill" href="{% url 'payment_proof_download' order.reference %}"><i class="bi bi-download me-1"></i> Download uploaded proof</a></p>{% endif %}
+            {% if can_review_payment_proof %}
+              <form method="post" action="{% url 'payment_proof_review' order.reference %}" class="mm-payment-review-form mt-4">{% csrf_token %}<label class="form-label" for="payment-review-note">Review note (optional)</label><textarea id="payment-review-note" name="note" class="form-control mb-3" rows="2" maxlength="300" placeholder="Reason for rejection, if applicable"></textarea><div class="d-flex flex-wrap gap-2"><button type="submit" name="decision" value="approve" class="btn btn-success rounded-pill" data-confirm="Confirm that the money has been received in the pharmacy account?">Verify payment received</button><button type="submit" name="decision" value="reject" class="btn btn-outline-danger rounded-pill" data-confirm="Reject this payment proof and allow the customer to upload again?">Reject proof</button></div></form>
+            {% endif %}
+            {% if order.payment_review_note and order.payment_status != 'proof_submitted' and order.payment_status != 'paid' %}<p class="small text-muted mt-3 mb-0">Review note: {{ order.payment_review_note }}</p>{% endif %}
+          </section>
+        {% endif %}
+
+        {% if order.payment_method == 'razorpay' and order.payment_status == 'pending' and order.customer_id == request.user.id and order.status == 'pending' %}
+          <section class="mk-panel-card mt-4 mm-payment-online-panel"><h2><i class="bi bi-shield-lock me-2"></i>Secure online payment</h2><p>Order total: <strong>₹{{ order.total|floatformat:2 }}</strong>. Payment will be marked paid only after server-side verification with Razorpay.</p>
+            {% if razorpay_enabled %}<form id="razorpay-csrf-form" hidden>{% csrf_token %}</form><button id="razorpay-pay-button" type="button" class="btn btn-primary rounded-pill">Pay ₹{{ order.total|floatformat:2 }} with Razorpay</button><p id="razorpay-payment-message" class="form-text mt-3" role="status" aria-live="polite"></p>
+            {% else %}<div class="alert alert-warning mb-0">Razorpay credentials are not configured on this server. Ask the administrator to add `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET`; no payment has been made.</div>{% endif %}
+          </section>
+        {% endif %}
+      </div>
+
+      <div class="col-lg-4">
+        <aside class="mk-order-summary">
+          <h2>Order summary</h2>
+          <div class="summary-line"><div><strong>Items subtotal</strong></div><span>₹{{ order.subtotal|floatformat:2 }}</span></div>
+          <div class="summary-line"><div><strong>Delivery fee</strong></div><span>₹{{ order.delivery_fee|floatformat:2 }}</span></div>
+          <div class="summary-total-line"><span>Total</span><strong>₹{{ order.total|floatformat:2 }}</strong></div>
+          <div class="mm-order-payment-box">
+            <div><small>Payment method</small><strong>{{ order.get_payment_method_display }}</strong></div>
+            <div><small>Payment status</small><strong class="{% if order.payment_status == 'collected' or order.payment_status == 'paid' %}payment-is-collected{% else %}payment-is-pending{% endif %}">{{ order.get_payment_status_display }}</strong></div>
+            {% if order.payment_collected_at %}<small>Cash collected {{ order.payment_collected_at|date:"d M Y, g:i A" }}</small>{% endif %}
+            {% if order.payment_verified_at %}<small>Payment verified {{ order.payment_verified_at|date:"d M Y, g:i A" }}</small>{% endif %}
+          </div>
+          <div class="summary-store mt-4"><span class="cart-store-icon"><i class="bi bi-shop"></i></span><div><strong>{{ order.pharmacy.name }}</strong><small>{{ order.pharmacy.full_address }}</small><a href="{% url 'pharmacy_detail' order.pharmacy.slug %}">View store page</a></div></div>
+          <div class="mk-order-mode mt-3"><i class="bi {% if order.fulfilment == 'delivery' %}bi-truck{% else %}bi-bag-check{% endif %}"></i><div><strong>{{ order.get_fulfilment_display }}</strong><small>{% if order.fulfilment == 'delivery' %}{{ order.delivery_address }}{% else %}Pickup from the selected pharmacy{% endif %}</small></div></div>
+          <p class="summary-note mt-3">
+            {% if order.payment_status == 'paid' %}Online payment has been verified. This is your payment receipt.{% elif order.payment_status == 'collected' %}Cash collection has been recorded. This is your payment receipt.{% elif order.payment_status == 'proof_submitted' %}Payment proof is awaiting verification; this is not yet a paid receipt.{% elif order.payment_method == 'cash_on_delivery' %}Cash is due when the order arrives. This is an order receipt, not proof of payment.{% elif order.fulfilment == 'pickup' %}No payment choice was required to place this pickup request. Pay by the pharmacy QR / UPI or bank transfer details above and upload your receipt for verification, if configured.{% elif order.payment_method == 'razorpay' %}Complete Razorpay checkout above. This is not proof of payment until verification succeeds.{% else %}Payment is pending. Follow the QR payment instructions and submit proof for verification.{% endif %}
+          </p>
+          <a class="btn btn-primary rounded-pill w-100 mt-2" href="{% url 'order_receipt_pdf' order.reference %}"><i class="bi bi-file-earmark-pdf me-1"></i> {% if order.payment_status == 'collected' or order.payment_status == 'paid' %}Download PDF payment receipt{% else %}Download PDF order receipt{% endif %}</a>
+          <button type="button" class="btn btn-outline-primary rounded-pill w-100 mt-2" onclick="window.print()"><i class="bi bi-printer me-1"></i> Print page</button>
+        </aside>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+{% if order.payment_method == 'razorpay' and order.payment_status == 'pending' and order.customer_id == request.user.id and razorpay_enabled and order.status == 'pending' %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+(() => {
+  const button = document.getElementById('razorpay-pay-button');
+  const message = document.getElementById('razorpay-payment-message');
+  const csrf = document.querySelector('#razorpay-csrf-form input[name="csrfmiddlewaretoken"]')?.value || '';
+  const createUrl = "{% url 'razorpay_create_order' order.reference %}";
+  const verifyUrl = "{% url 'razorpay_verify_payment' order.reference %}";
+  if (!button || !message) return;
+  const show = (text) => { message.textContent = text; };
+  button.addEventListener('click', async () => {
+    button.disabled = true;
+    show('Connecting securely to Razorpay…');
+    try {
+      if (!window.Razorpay) throw new Error('The Razorpay checkout script did not load. Check your internet connection and retry.');
+      const response = await fetch(createUrl, {method: 'POST', headers: {'X-CSRFToken': csrf, 'X-Requested-With': 'XMLHttpRequest'}});
+      const data = await response.json();
+      if (!response.ok || data.error) throw new Error(data.error || 'Could not start payment. Please try again.');
+      if (data.paid) { window.location.reload(); return; }
+      const checkout = new Razorpay({
+        key: data.key_id, order_id: data.order_id, amount: data.amount, currency: data.currency,
+        name: data.name, description: data.description, prefill: data.prefill, theme: {color: '#27877b'},
+        handler: async (result) => {
+          show('Verifying payment with the payment provider…');
+          try {
+            const body = new URLSearchParams({razorpay_order_id: result.razorpay_order_id, razorpay_payment_id: result.razorpay_payment_id, razorpay_signature: result.razorpay_signature});
+            const verifyResponse = await fetch(verifyUrl, {method: 'POST', headers: {'X-CSRFToken': csrf, 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'X-Requested-With': 'XMLHttpRequest'}, body: body.toString()});
+            const verifyData = await verifyResponse.json();
+            if (!verifyResponse.ok || !verifyData.ok) throw new Error(verifyData.error || 'Payment could not be verified.');
+            show(verifyData.message || 'Payment verified. Reloading order status…');
+            window.location.reload();
+          } catch (error) { show(error.message || 'Verification failed. If your bank was debited, contact support before paying again.'); button.disabled = false; }
+        },
+        modal: {ondismiss: () => { show('Checkout closed. If a payment was initiated, check your order/payment status before retrying.'); button.disabled = false; }}
+      });
+      checkout.on('payment.failed', (failure) => { show(failure.error?.description || 'Payment did not complete. No paid status was recorded.'); button.disabled = false; });
+      checkout.open();
+    } catch (error) { show(error.message || 'Payment setup failed. Please try again.'); button.disabled = false; }
+  });
+})();
+</script>
+{% endif %}
+{% endblock %}

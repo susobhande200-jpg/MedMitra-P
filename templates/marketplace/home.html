@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}MedMitra — Find medicines and compare local pharmacies{% endblock %}
+{% block meta_description %}{{ homepage_meta_description|default:"Find medicines, browse health essentials, compare retailer-reported prices and discover participating local pharmacies with MedMitra." }}{% endblock %}
+{% block extra_head %}<link href="{% static 'css/homepage-commerce.css' %}" rel="stylesheet">{% endblock %}
+{% block content %}
+<section class="mm-hero" aria-labelledby="mmHeroTitle">
+  <div class="container mm-hero-wrap">
+    <div class="mm-hero-copy">
+      <div class="mm-eyebrow"><span class="mm-eyebrow-dot"></span> LOCAL PHARMACIES. CLEARER CHOICES.</div>
+      <h1 id="mmHeroTitle">Find your medicine.<br><span>Compare nearby.</span></h1>
+      <p>Discover participating pharmacies, compare listed prices and check reported availability before you make the trip.</p>
+      <form class="mm-hero-search" method="get" action="{% url 'medicine_search' %}" role="search">
+        <i class="bi bi-search" aria-hidden="true"></i>
+        <label class="visually-hidden" for="mmHeroSearch">Medicine, brand or generic name</label>
+        <input id="mmHeroSearch" type="search" name="q" placeholder="Search medicine, brand or generic name…" autocomplete="off">
+        <button type="submit">Search <i class="bi bi-arrow-right"></i></button>
+      </form>
+    </div>
+    <div class="mm-hero-art" aria-label="Illustration of medicine price comparison">
+      <div class="mm-art-halo"></div>
+      <div class="mm-art-card">
+        <div class="mm-art-card-head"><span><i class="bi bi-shield-check-fill"></i> LOCAL AVAILABILITY</span><span class="mm-dots"><i></i><i></i><i></i></span></div>
+        <div class="mm-art-search"><i class="bi bi-search"></i><span>Paracetamol 500 mg</span><i class="bi bi-sliders2"></i></div>
+        <div class="mm-art-store"><span class="mm-art-store-icon"><i class="bi bi-shop"></i></span><div><strong>GreenLeaf Pharmacy</strong><small><i class="bi bi-geo-alt"></i> Local participating store</small></div><b>₹24<small>Example price</small></b></div>
+        <div class="mm-art-store"><span class="mm-art-store-icon blue"><i class="bi bi-shop"></i></span><div><strong>CarePoint Chemist</strong><small><i class="bi bi-clock-history"></i> Recently updated</small></div><b>₹28<small>Example price</small></b></div>
+        <div class="mm-art-disclaimer"><i class="bi bi-info-circle"></i> Illustration only — stores and prices are examples.</div>
+      </div>
+      <div class="mm-floating-note mm-note-verified"><span><i class="bi bi-patch-check"></i></span><div><strong>Verified stores</strong><small>Approval-first listings</small></div></div>
+      <div class="mm-floating-note mm-note-compare"><span><i class="bi bi-graph-down-arrow"></i></span><div><strong>Compare clearly</strong><small>Make an informed choice</small></div></div>
+    </div>
+  </div>
+</section>
+
+{% if homepage_section_settings.offers.is_active and homepage_promotions %}
+<section class="mm-section mm-offers-section mm-offers-images-only" aria-label="Featured offers">
+  <div class="container">
+    <div class="mm-offer-image-toolbar"><span class="visually-hidden">Featured offer images</span><div class="mm-rail-controls"><button type="button" class="mm-rail-arrow" data-scroll-rail="mmOffersRail" data-direction="left" aria-label="Scroll offer images left"><i class="bi bi-chevron-left"></i></button><button type="button" class="mm-rail-arrow" data-scroll-rail="mmOffersRail" data-direction="right" aria-label="Scroll offer images right"><i class="bi bi-chevron-right"></i></button></div></div>
+    <div class="mm-image-rail mm-offer-rail mm-offer-image-rail" id="mmOffersRail" tabindex="0" aria-label="Featured offer images">
+      {% for promotion in homepage_promotions %}
+        {% if promotion.target_url %}<a class="mm-offer-image-only" href="{{ promotion.target_url }}" aria-label="Open featured offer {{ forloop.counter }}">{% else %}<div class="mm-offer-image-only">{% endif %}
+          <img src="{{ promotion.image.url }}" alt="{{ promotion.alt_text|default:'MedMitra featured offer' }}" loading="lazy">
+        {% if promotion.target_url %}</a>{% else %}</div>{% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if homepage_section_settings.categories.is_active %}
+<section class="mm-section mm-category-section" aria-labelledby="mmCategoriesTitle"><div class="container">
+  <div class="mm-section-heading"><div><span class="mm-section-kicker">{{ homepage_section_settings.categories.eyebrow|default:"EXPLORE YOUR WELLNESS" }}</span><h2 id="mmCategoriesTitle">{{ homepage_section_settings.categories.title|default:"Shop by Category" }}</h2>{% if homepage_section_settings.categories.description %}<p>{{ homepage_section_settings.categories.description }}</p>{% endif %}</div><a class="mm-view-all" href="{% url 'medicine_search' %}">Explore more <i class="bi bi-arrow-up-right"></i></a></div>
+  <div class="mm-category-rail-wrap"><div class="mm-category-grid" id="mmCategoryRail" tabindex="0" aria-label="Shop by category, two rows; scroll horizontally for more">{% for category in homepage_categories %}<a class="mm-category-tile" href="{% if category.target_url %}{{ category.target_url }}{% else %}{% url 'medicine_search' %}?q={{ category.name|urlencode }}{% endif %}"><span class="mm-category-art">{% if category.image %}<img src="{{ category.image.url }}" alt="" loading="lazy">{% else %}<i class="bi {{ category.icon }}" aria-hidden="true"></i>{% endif %}</span><span class="mm-category-name">{{ category.name }}</span>{% if category.subtitle %}<small>{{ category.subtitle }}</small>{% endif %}<i class="bi bi-arrow-up-right mm-category-arrow" aria-hidden="true"></i></a>{% empty %}<div class="mm-empty-message">Category tiles will appear after an administrator adds them.</div>{% endfor %}</div><div class="mm-category-scroll-hint"><i class="bi bi-arrow-left-right"></i> Scroll to explore all categories</div></div>
+</div></section>
+{% endif %}
+
+{% if homepage_section_settings.new_launches.is_active %}
+<section class="mm-section mm-product-section" aria-labelledby="mmNewLaunchesTitle"><div class="container">
+  <div class="mm-section-heading"><div><span class="mm-section-kicker">{{ homepage_section_settings.new_launches.eyebrow|default:"JUST ARRIVED" }}</span><h2 id="mmNewLaunchesTitle">{{ homepage_section_settings.new_launches.title|default:"New launches" }}</h2>{% if homepage_section_settings.new_launches.description %}<p>{{ homepage_section_settings.new_launches.description }}</p>{% endif %}</div><div class="mm-rail-controls"><button type="button" class="mm-rail-arrow" data-scroll-rail="mmNewLaunchesRail" data-direction="left" aria-label="Scroll new launches left"><i class="bi bi-chevron-left"></i></button><button type="button" class="mm-rail-arrow" data-scroll-rail="mmNewLaunchesRail" data-direction="right" aria-label="Scroll new launches right"><i class="bi bi-chevron-right"></i></button></div></div>
+  <div class="mm-product-rail" id="mmNewLaunchesRail" tabindex="0" aria-label="Newly launched products">{% for item in homepage_new_launches %}{% include "marketplace/partials/home_showcase_product.html" with item=item %}{% empty %}<div class="mm-empty-message">New launches will appear here when published by the administrator.</div>{% endfor %}</div>
+</div></section>
+{% endif %}
+
+{% if homepage_section_settings.trending.is_active %}
+<section class="mm-section mm-product-section mm-section-soft" aria-labelledby="mmTrendingTitle"><div class="container">
+  <div class="mm-section-heading"><div><span class="mm-section-kicker">{{ homepage_section_settings.trending.eyebrow|default:"POPULAR PICKS" }}</span><h2 id="mmTrendingTitle">{{ homepage_section_settings.trending.title|default:"Trending near you" }}</h2>{% if homepage_section_settings.trending.description %}<p>{{ homepage_section_settings.trending.description }}</p>{% endif %}</div><div class="mm-rail-controls"><button type="button" class="mm-rail-arrow" data-scroll-rail="mmTrendingRail" data-direction="left" aria-label="Scroll trending products left"><i class="bi bi-chevron-left"></i></button><button type="button" class="mm-rail-arrow" data-scroll-rail="mmTrendingRail" data-direction="right" aria-label="Scroll trending products right"><i class="bi bi-chevron-right"></i></button></div></div>
+  <div class="mm-product-rail" id="mmTrendingRail" tabindex="0" aria-label="Trending products">{% for item in homepage_trending_products %}{% include "marketplace/partials/home_showcase_product.html" with item=item %}{% empty %}<div class="mm-empty-message">Trending products will appear here when published by the administrator.</div>{% endfor %}</div>
+</div></section>
+{% endif %}
+
+{% if homepage_section_settings.local_listings.is_active %}
+<section class="mm-section mm-local-listings" aria-labelledby="mmLocalListingTitle"><div class="container"><div class="mm-section-heading"><div><span class="mm-section-kicker">{{ homepage_section_settings.local_listings.eyebrow|default:"LOCAL PHARMACIES" }}</span><h2 id="mmLocalListingTitle">{{ homepage_section_settings.local_listings.title|default:"Available from local pharmacies" }}</h2>{% if homepage_section_settings.local_listings.description %}<p>{{ homepage_section_settings.local_listings.description }}</p>{% endif %}</div><a class="mm-view-all" href="{% url 'medicine_search' %}">Browse medicines <i class="bi bi-arrow-up-right"></i></a></div>
+  <div class="mm-product-rail mm-live-product-rail" id="mmLocalListingsRail" tabindex="0" aria-label="Medicine listings from local pharmacies">{% for listing in featured %}<article class="mm-live-product-card"><a class="mm-live-image" href="{% url 'medicine_detail' listing.product_id %}">{% if listing.image %}<img src="{{ listing.image.url }}" alt="{{ listing.product.brand_name }} medicine" loading="lazy">{% elif listing.product.image %}<img src="{{ listing.product.image.url }}" alt="{{ listing.product.brand_name }} medicine" loading="lazy">{% else %}<span><i class="bi bi-capsule-pill"></i></span>{% endif %}{% if listing.discount_percent %}<b class="mm-discount">{{ listing.discount_percent }}% off</b>{% endif %}</a><div class="mm-live-product-copy"><small>{{ listing.product.manufacturer|default:listing.product.get_dosage_form_display }}</small><h3><a href="{% url 'medicine_detail' listing.product_id %}">{{ listing.product.brand_name }}{% if listing.product.strength %} {{ listing.product.strength }}{% endif %}</a></h3><p>{{ listing.product.generic_name|default:listing.product.pack_size|default:"Product details from the pharmacy" }}</p><div class="mm-live-price"><strong>₹{{ listing.selling_price|floatformat:0 }}</strong>{% if listing.mrp > listing.selling_price %}<del>₹{{ listing.mrp|floatformat:0 }}</del>{% endif %}</div><a class="mm-pharmacy-mini" href="{% url 'pharmacy_detail' listing.pharmacy.slug %}"><i class="bi bi-shop"></i> {{ listing.pharmacy.name }} <i class="bi bi-arrow-up-right"></i></a><small class="mm-listing-freshness">{% if listing.inventory_is_fresh and listing.in_stock %}Recently updated · Reported available{% else %}Please confirm current availability{% endif %}</small></div></article>{% empty %}<div class="mm-empty-message">Live pharmacy listings, images and retailer-reported prices will appear here once participating stores publish products.</div>{% endfor %}</div>
+</div></section>
+{% endif %}
+
+
+<section class="mm-section mm-how-section"><div class="container"><div class="mm-section-heading"><div><span class="mm-section-kicker">HOW MEDMITRA WORKS</span><h2>A clearer path to your medicine</h2><p>Discover, compare and contact participating pharmacies in one place.</p></div></div><div class="mm-difference-grid"><article class="mm-difference-card"><span><i class="bi bi-search"></i></span><div><strong>01</strong><h3>Search and compare</h3><p>Search by brand, generic name or strength and compare reported prices.</p></div></article><article class="mm-difference-card"><span><i class="bi bi-shop"></i></span><div><strong>02</strong><h3>Choose a pharmacy</h3><p>Review a participating store’s details and reported availability before you visit.</p></div></article><article class="mm-difference-card"><span><i class="bi bi-file-earmark-medical"></i></span><div><strong>03</strong><h3>Send your request</h3><p>Upload a prescription when required and let the pharmacy confirm the details.</p></div></article></div></div></section>
+
+{% for banner in homepage_membership_banners %}<section class="mm-plus-wrap"><div class="container"><div class="mm-plus-banner">{% if banner.image %}<div class="mm-plus-image"><img src="{{ banner.image.url }}" alt="" loading="lazy"></div>{% endif %}<div class="mm-plus-content"><span class="mm-plus-eyebrow"><i class="bi bi-stars"></i> {{ banner.eyebrow }}</span><h2>{{ banner.title }}</h2><p>{{ banner.description }}</p>{% if banner.button_url %}<a class="mm-plus-button" href="{{ banner.button_url }}">{{ banner.button_label|default:"Find out more" }} <i class="bi bi-arrow-up-right"></i></a>{% elif banner.button_label %}<span class="mm-plus-coming">{{ banner.button_label }} <i class="bi bi-sparkle"></i></span>{% endif %}</div><div class="mm-plus-emblem" aria-hidden="true"><span>MM</span><b>PLUS</b><i class="bi bi-stars"></i></div></div></div></section>{% endfor %}
+
+{% if homepage_section_settings.image_banners.is_active and homepage_image_banners %}<section class="mm-section mm-image-strip-section" aria-label="Featured image banners"><div class="container"><div class="mm-image-strip-controls"><span class="mm-section-kicker">{{ homepage_section_settings.image_banners.eyebrow }}</span><div class="mm-rail-controls"><button type="button" class="mm-rail-arrow" data-scroll-rail="mmImageBannerRail" data-direction="left" aria-label="Scroll banners left"><i class="bi bi-chevron-left"></i></button><button type="button" class="mm-rail-arrow" data-scroll-rail="mmImageBannerRail" data-direction="right" aria-label="Scroll banners right"><i class="bi bi-chevron-right"></i></button></div></div><div class="mm-image-rail" id="mmImageBannerRail" tabindex="0" aria-label="More image banners">{% for banner in homepage_image_banners %}<div class="mm-image-strip-card">{% if banner.target_url %}<a href="{{ banner.target_url }}" aria-label="{{ banner.alt_text }}">{% endif %}<img src="{{ banner.image.url }}" alt="{{ banner.alt_text }}" loading="lazy">{% if banner.target_url %}</a>{% endif %}</div>{% endfor %}</div></div></section>{% endif %}
+
+{% if homepage_section_settings.difference.is_active %}<section class="mm-section mm-difference-section" aria-labelledby="mmDifferenceTitle"><div class="container"><div class="mm-section-heading"><div><span class="mm-section-kicker">{{ homepage_section_settings.difference.eyebrow|default:"THE MEDMITRA DIFFERENCE" }}</span><h2 id="mmDifferenceTitle">{{ homepage_section_settings.difference.title|default:"Why choose MedMitra?" }}</h2>{% if homepage_section_settings.difference.description %}<p>{{ homepage_section_settings.difference.description }}</p>{% endif %}</div></div>{% if homepage_metrics %}<div class="mm-difference-grid">{% for metric in homepage_metrics %}<article class="mm-difference-card"><span><i class="bi {{ metric.icon }}"></i></span><div><strong>{{ metric.value }}</strong><h3>{{ metric.label }}</h3>{% if metric.detail %}<p>{{ metric.detail }}</p>{% endif %}</div></article>{% endfor %}</div>{% else %}<p class="mm-admin-content-note">This section is ready for benefits managed by your administrator.</p>{% endif %}</div></section>{% endif %}
+
+{% if homepage_section_settings.testimonials.is_active %}<section class="mm-section mm-testimonials-section" aria-labelledby="mmTestimonialsTitle"><div class="container"><div class="mm-section-heading"><div><span class="mm-section-kicker">{{ homepage_section_settings.testimonials.eyebrow|default:"CUSTOMER VOICES" }}</span><h2 id="mmTestimonialsTitle">{{ homepage_section_settings.testimonials.title|default:"What our customers have to say" }}</h2>{% if homepage_section_settings.testimonials.description %}<p>{{ homepage_section_settings.testimonials.description }}</p>{% endif %}</div>{% if homepage_testimonials %}<div class="mm-rail-controls"><button type="button" class="mm-rail-arrow" data-scroll-rail="mmTestimonialsRail" data-direction="left" aria-label="Scroll reviews left"><i class="bi bi-chevron-left"></i></button><button type="button" class="mm-rail-arrow" data-scroll-rail="mmTestimonialsRail" data-direction="right" aria-label="Scroll reviews right"><i class="bi bi-chevron-right"></i></button></div>{% endif %}</div>{% if homepage_testimonials %}<div class="mm-review-rail" id="mmTestimonialsRail" tabindex="0" aria-label="Customer reviews">{% for review in homepage_testimonials %}<article class="mm-review-card"><div class="mm-review-stars" aria-label="{{ review.rating }} out of 5 stars">{% for star in "12345" %}{% if forloop.counter <= review.rating %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}{% endfor %}</div><blockquote>“{{ review.quote }}”</blockquote><div class="mm-review-author"><span class="mm-review-avatar">{{ review.customer_name|slice:":1"|upper }}</span><div><strong>{{ review.customer_name }}</strong>{% if review.location_label %}<small>{{ review.location_label }}</small>{% endif %}{% if review.review_date %}<time datetime="{{ review.review_date|date:'Y-m-d' }}">{{ review.review_date|date:"F j, Y" }}</time>{% endif %}</div></div></article>{% endfor %}</div>{% else %}<p class="mm-admin-content-note">Customer reviews appear here after an administrator adds genuine feedback and approves it for publication.</p>{% endif %}</div></section>{% endif %}
+
+{% if top_healthcare_terms or top_medicine_terms or top_searched_terms or top_vaccine_terms or top_selling_terms or trending_terms or discount_terms %}
+<section class="mm-section mm-popular-searches"><div class="container"><div class="mm-section-heading"><div><span class="mm-section-kicker">FIND FASTER</span><h2>Popular search terms</h2><p>Quick links curated by the MedMitra team to help you reach the right listings with fewer taps.</p></div></div>
+{% if top_selling_terms %}<div class="mm-keyword-group"><h3>Top selling</h3><div class="mm-keyword-list" tabindex="0" aria-label="Top selling search terms">{% for item in top_selling_terms %}<a href="{% if item.target_url %}{{ item.target_url }}{% else %}{% url 'medicine_search' %}?q={{ item.term|urlencode }}{% endif %}">{{ item.term }}</a>{% endfor %}</div></div>{% endif %}
+{% if trending_terms %}<div class="mm-keyword-group"><h3>Trending</h3><div class="mm-keyword-list" tabindex="0" aria-label="Trending search terms">{% for item in trending_terms %}<a href="{% if item.target_url %}{{ item.target_url }}{% else %}{% url 'medicine_search' %}?q={{ item.term|urlencode }}{% endif %}">{{ item.term }}</a>{% endfor %}</div></div>{% endif %}
+{% if discount_terms %}<div class="mm-keyword-group"><h3>Top discounts</h3><div class="mm-keyword-list" tabindex="0" aria-label="Top discount search terms">{% for item in discount_terms %}<a href="{% if item.target_url %}{{ item.target_url }}{% else %}{% url 'medicine_search' %}?q={{ item.term|urlencode }}{% endif %}">{{ item.term }}</a>{% endfor %}</div></div>{% endif %}
+{% if top_healthcare_terms %}<div class="mm-keyword-group"><h3>Healthcare products</h3><div class="mm-keyword-list" tabindex="0" aria-label="Healthcare product searches">{% for item in top_healthcare_terms %}<a href="{% if item.target_url %}{{ item.target_url }}{% else %}{% url 'medicine_search' %}?q={{ item.term|urlencode }}{% endif %}">{{ item.term }}</a>{% endfor %}</div></div>{% endif %}
+{% if top_medicine_terms %}<div class="mm-keyword-group"><h3>Medicines</h3><div class="mm-keyword-list" tabindex="0" aria-label="Medicine searches">{% for item in top_medicine_terms %}<a href="{% if item.target_url %}{{ item.target_url }}{% else %}{% url 'medicine_search' %}?q={{ item.term|urlencode }}{% endif %}">{{ item.term }}</a>{% endfor %}</div></div>{% endif %}
+{% if top_searched_terms %}<div class="mm-keyword-group"><h3>Top searches</h3><div class="mm-keyword-list" tabindex="0" aria-label="Top searched medicines">{% for item in top_searched_terms %}<a href="{% if item.target_url %}{{ item.target_url }}{% else %}{% url 'medicine_search' %}?q={{ item.term|urlencode }}{% endif %}">{{ item.term }}</a>{% endfor %}</div></div>{% endif %}
+{% if top_vaccine_terms %}<div class="mm-keyword-group"><h3>Vaccines</h3><div class="mm-keyword-list" tabindex="0" aria-label="Vaccine searches">{% for item in top_vaccine_terms %}<a href="{% if item.target_url %}{{ item.target_url }}{% else %}{% url 'medicine_search' %}?q={{ item.term|urlencode }}{% endif %}">{{ item.term }}</a>{% endfor %}</div></div>{% endif %}
+</div></section>{% endif %}
+{% if homepage_editorial_sections %}<section class="mm-section mm-editorial-section"><div class="container mm-editorial-grid">{% for section in homepage_editorial_sections %}<article class="mm-editorial-card">{% if section.eyebrow %}<span class="mm-section-kicker">{{ section.eyebrow }}</span>{% endif %}<h2>{{ section.title }}</h2><div>{{ section.body|linebreaksbr }}</div>{% if section.button_label and section.button_url %}<a href="{{ section.button_url }}">{{ section.button_label }} <i class="bi bi-arrow-up-right"></i></a>{% endif %}</article>{% endfor %}</div></section>{% endif %}
+<section class="mm-join-section"><div class="container"><div class="mm-join-inner"><div><span class="mm-section-kicker">FOR PHARMACIES</span><h2>Bring your pharmacy into the local search.</h2><p>Register your store, submit your licence details and manage medicine listings after approval.</p></div><a href="{% url 'retailer_register' %}">Partner with MedMitra <i class="bi bi-arrow-up-right"></i></a></div></div></section>
+{% endblock %}
+{% block extra_js %}<script>
+(() => {
+  document.querySelectorAll('[data-scroll-rail]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const rail = document.getElementById(button.dataset.scrollRail);
+      if (!rail) return;
+      const direction = button.dataset.direction === 'left' ? -1 : 1;
+      rail.scrollBy({left: direction * Math.max(260, rail.clientWidth * 0.8), behavior: 'smooth'});
+    });
+  });
+})();
+</script>{% endblock %}

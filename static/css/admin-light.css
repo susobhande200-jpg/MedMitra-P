@@ -1,0 +1,29 @@
+/* MedMitra admin: restrained light surfaces with clear contrast. */
+:root { color-scheme: light; }
+html, html[data-bs-theme="dark"] { color-scheme: light !important; }
+body, .app-wrapper, .content-wrapper, .content, .card, .modal-content,
+.main-footer, .app-header, .app-sidebar, .sidebar, .nav-sidebar .nav-link,
+.dropdown-menu, .form-control, .form-select, .input-group-text, .table,
+.table td, .table th, .info-box, .small-box {
+  color: #203532;
+}
+body, .content-wrapper, .content, .main-footer, .app-header, .app-sidebar,
+.sidebar, .card, .modal-content, .dropdown-menu, .form-control,
+.form-select, .input-group-text, .info-box, .small-box {
+  background-color: #fff;
+}
+.app-header, .app-sidebar, .main-footer, .card, .dropdown-menu,
+.form-control, .form-select, .input-group-text { border-color: #dce9e5; }
+.app-sidebar { background: #f8fbfa !important; }
+.app-sidebar .nav-link, .app-sidebar .brand-link { color: #29433e !important; }
+.app-sidebar .nav-link.active, .app-sidebar .nav-link:hover {
+  background: #e5f4ef !important; color: #087f70 !important;
+}
+.app-header .nav-link, .app-header .navbar-nav .nav-link { color: #29433e; }
+.content-header h1, .card-title, .form-group label, .breadcrumb-item,
+.table thead th { color: #203532; }
+.form-control:focus, .form-select:focus {
+  border-color: #087f70; box-shadow: 0 0 0 .2rem rgba(8,127,112,.14);
+}
+.table thead th { background: #f1f7f5; }
+.table-striped > tbody > tr:nth-of-type(odd) > * { --bs-table-bg-type: #f8fbfa; }

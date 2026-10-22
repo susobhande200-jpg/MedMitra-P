@@ -1,0 +1,18 @@
+/* Featured offers are image-only cards; copy text is not displayed. */
+.mm-offers-images-only { padding-top: clamp(10px, 2vw, 22px) !important; }
+.mm-offers-images-only .mm-offer-image-toolbar { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+.mm-offer-image-rail { align-items: stretch; }
+.mm-offer-image-only {
+  display: block; flex: 0 0 clamp(260px, 34vw, 430px); min-width: 0;
+  overflow: hidden; border: 1px solid var(--mk-border, #dce9e5); border-radius: 18px;
+  background: #fff; box-shadow: 0 8px 24px rgba(24,65,57,.06); scroll-snap-align: start;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.mm-offer-image-only:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(24,65,57,.12); }
+.mm-offer-image-only img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 6; object-fit: cover; }
+.mm-offers-images-only .mm-rail-controls { margin-left: auto; }
+@media (max-width: 575.98px) {
+  .mm-offers-images-only .container { padding-inline: 14px; }
+  .mm-offer-image-only { flex-basis: min(84vw, 360px); border-radius: 14px; }
+  .mm-offer-image-only img { aspect-ratio: 16 / 7; }
+}

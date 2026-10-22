@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Find verified pharmacies — MedMitra{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+{% endblock %}
+{% block content %}
+<section class="mk-page-hero">
+  <div class="container">
+    <div class="mk-section-kicker">LOCAL PHARMACY DIRECTORY</div>
+    <h1>Find a pharmacy <span class="mk-gradient-text">near you</span></h1>
+    <p>Enter a town, neighbourhood or PIN code. You can search manually without sharing your device location.</p>
+    <form class="mk-pharmacy-search" method="get" action="{% url 'pharmacy_finder' %}">
+      <div class="input-icon-wrap"><i class="bi bi-search" aria-hidden="true"></i><input class="form-control" name="q" value="{{ q }}" placeholder="Town, neighbourhood or pharmacy name" aria-label="Town, neighbourhood or pharmacy name"></div>
+      <input class="form-control" name="pincode" value="{{ pincode }}" inputmode="numeric" placeholder="PIN code" aria-label="PIN code">
+      <label class="filter-check" for="deliveryOnly"><input id="deliveryOnly" type="checkbox" name="delivery" value="yes" {% if delivery == 'yes' %}checked{% endif %}> Delivery available</label>
+      <button class="btn btn-primary rounded-pill px-4" type="submit">Search pharmacies</button>
+    </form>
+  </div>
+</section>
+
+<section class="mk-section">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-5">
+        <div class="mk-section-heading compact-heading"><div><div class="mk-section-kicker">PARTICIPATING STORES</div><h2>Verified pharmacies <span class="mk-gradient-text">to explore</span></h2></div><span class="result-count-pill">{{ pharmacies|length }} found</span></div>
+        <div class="mk-pharmacy-list">
+          {% for pharmacy in pharmacies %}
+          <article class="mk-pharmacy-card">
+            <div class="pharmacy-avatar"><i class="bi bi-shop" aria-hidden="true"></i></div>
+            <div class="pharmacy-card-main"><div class="verified-label"><i class="bi bi-patch-check-fill" aria-hidden="true"></i> Verified listing</div>
+              <h3><a href="{% url 'pharmacy_detail' pharmacy.slug %}">{{ pharmacy.name }}</a></h3>
+              <p><i class="bi bi-geo-alt" aria-hidden="true"></i> {{ pharmacy.full_address }}</p>
+              <div class="pharmacy-card-meta"><span><i class="bi bi-capsule" aria-hidden="true"></i> {{ pharmacy.live_listings }} listings</span>{% if pharmacy.offers_delivery %}<span><i class="bi bi-truck" aria-hidden="true"></i> Delivery</span>{% endif %}{% if pharmacy.offers_pickup %}<span><i class="bi bi-bag-check" aria-hidden="true"></i> Pickup</span>{% endif %}</div>
+              <a class="mk-text-link" href="{% url 'pharmacy_detail' pharmacy.slug %}">View pharmacy <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+            </div>
+          </article>
+          {% empty %}
+          <div class="mk-empty-state"><i class="bi bi-geo-alt" aria-hidden="true"></i><h3>No pharmacies match yet</h3><p>Try a broader location or clear your filters. Only approved pharmacies appear in this directory.</p><a href="{% url 'retailer_register' %}" class="btn btn-outline-primary rounded-pill">Register a pharmacy</a></div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="mk-map-card">
+          <div class="map-card-heading"><div><h2>Verified pharmacy map</h2><p>This map uses store coordinates on file, where available.</p></div><span class="map-live-label"><i class="bi bi-map" aria-hidden="true"></i> OpenStreetMap</span></div>
+          <div id="pharmacyMap" class="mk-map" role="region" aria-label="Map of participating pharmacies"></div>
+          <div class="map-note"><i class="bi bi-info-circle" aria-hidden="true"></i> If no pins appear, use the address list or search by PIN code. MedMitra does not access your location automatically.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+{{ map_points|json_script:"mapPoints" }}
+<script>
+(()=>{
+  const el=document.getElementById('pharmacyMap');
+  if(!el) return;
+  if(!window.L){el.innerHTML='<p class="p-3" role="status">The interactive map library could not load. Use the verified pharmacy list above.</p>';return;}
+  let pts=[];
+  try{const node=document.getElementById('mapPoints');pts=JSON.parse(node?.textContent||'[]')}catch(e){pts=[]}
+  const map=L.map(el,{scrollWheelZoom:false}).setView([22.7,87.7],8);
+  const tiles=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
+  tiles.on('tileerror',()=>{el.setAttribute('data-tiles-warning','true')});
+  const bounds=[];
+  const safe=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  pts.forEach(p=>{
+    if(!Number.isFinite(Number(p.lat))||!Number.isFinite(Number(p.lng)))return;
+    const marker=L.marker([Number(p.lat),Number(p.lng)]).addTo(map);
+    const link=/^\/pharmacies\/[A-Za-z0-9_-]+\/$/.test(p.url||'')?'<a href="'+p.url+'">View pharmacy</a>':'';
+    marker.bindPopup('<strong>'+safe(p.name)+'</strong><br>'+safe(p.address)+(link?'<br>'+link:''));
+    bounds.push([Number(p.lat),Number(p.lng)]);
+  });
+  if(bounds.length)map.fitBounds(bounds,{padding:[28,28],maxZoom:13});
+  else L.marker([22.7,87.7]).addTo(map).bindPopup('No verified pharmacy coordinates are available yet.');
+})();
+</script>
+{% endblock %}

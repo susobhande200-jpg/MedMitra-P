@@ -1,0 +1,13 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+db.sqlite3
+staticfiles/
+media/
+.pytest_cache/
+.coverage
+
+# Customer payment proofs must remain private and outside public media.
+private_uploads/

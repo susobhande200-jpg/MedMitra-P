@@ -1,0 +1,48 @@
+/* Large, fully clickable fulfilment choices for pharmacy owners. */
+.mm-fulfilment-field { min-width: 0; }
+.mm-fulfilment-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  min-height: 76px;
+  padding: 14px 16px;
+  margin: 3px 0 0;
+  border: 1px solid var(--mk-border, #dce9e4);
+  border-radius: 15px;
+  background: var(--mk-card, #fff);
+  color: var(--mk-ink, #203b38);
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  pointer-events: auto;
+  transition: border-color .16s ease, background-color .16s ease, box-shadow .16s ease;
+}
+.mm-fulfilment-option:hover { border-color: var(--mk-accent, #218e80); }
+.mm-fulfilment-option:focus-within { outline: 3px solid color-mix(in srgb, var(--mk-accent, #218e80) 22%, transparent); outline-offset: 2px; }
+.mm-fulfilment-option .form-check-input {
+  display: block !important;
+  position: relative;
+  inset: auto;
+  z-index: 1;
+  float: none;
+  flex: 0 0 1.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  cursor: pointer;
+  accent-color: var(--mk-accent, #218e80);
+}
+.mm-fulfilment-option-copy { display: flex; flex: 1 1 auto; flex-direction: column; gap: 4px; min-width: 0; pointer-events: none; }
+.mm-fulfilment-option-copy strong { color: var(--mk-ink, #203b38); font-size: .92rem; font-weight: 850; }
+.mm-fulfilment-option-copy small { color: var(--mk-muted, #74857e); font-size: .74rem; line-height: 1.45; }
+.mm-fulfilment-option-icon { display: grid; flex: 0 0 38px; width: 38px; height: 38px; place-items: center; border-radius: 12px; background: var(--mk-soft, #eff8f4); color: var(--mk-accent, #218e80); font-size: 1.1rem; pointer-events: none; }
+.mm-fulfilment-option:has(.form-check-input:checked) { border-color: var(--mk-accent, #218e80); background: color-mix(in srgb, var(--mk-accent, #218e80) 7%, var(--mk-card, #fff)); box-shadow: 0 0 0 2px color-mix(in srgb, var(--mk-accent, #218e80) 10%, transparent); }
+.mm-fulfilment-option:has(.form-check-input:checked) .mm-fulfilment-option-icon { background: var(--mk-accent, #218e80); color: #fff; }
+html[data-theme="dark"] .mm-fulfilment-option { background: var(--mk-card, #13221f); border-color: var(--mk-border, #2c453d); }
+html[data-theme="dark"] .mm-fulfilment-option:has(.form-check-input:checked) { background: color-mix(in srgb, var(--mk-accent, #218e80) 16%, var(--mk-card, #13221f)); }
+@media (max-width: 575.98px) { .mm-fulfilment-option { min-height: 72px; padding: 13px; gap: 10px; } .mm-fulfilment-option-copy strong { font-size: .85rem; } .mm-fulfilment-option-copy small { font-size: .7rem; } .mm-fulfilment-option-icon { width: 34px; height: 34px; flex-basis: 34px; } }

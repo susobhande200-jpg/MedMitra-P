@@ -1,0 +1,39 @@
+/* MedMitra Light Refresh v3 — clean, calm, high-contrast pharmacy UX */
+:root{
+ --mk-bg:#f6faf9;--mk-card:#fff;--mk-card-2:#f0f8f6;--mk-ink:#18312e;--mk-muted:#607773;
+ --mk-border:#dce9e5;--mk-soft:#e8f4f0;--mk-accent:#087f70;--mk-accent-2:#19a58d;
+ --mk-glow:rgba(8,127,112,.13);--mk-radius:20px;--mk-shadow:0 8px 28px rgba(24,65,57,.07);--mk-shadow-hover:0 16px 38px rgba(24,65,57,.12);
+ color-scheme:light;
+}
+html,html[data-theme="light"]{color-scheme:light!important;background:#f6faf9!important}
+body{background:#f6faf9!important;color:#18312e!important;font-family:"DM Sans",system-ui,sans-serif;line-height:1.65}
+body p{color:#607773}
+.site-nav{background:rgba(255,255,255,.96)!important;border-bottom:1px solid #dce9e5!important;box-shadow:0 3px 18px rgba(24,65,57,.045)!important;padding:10px 0!important}
+.brand{font-weight:850!important;letter-spacing:-.045em!important;color:#18312e!important}.brand-mark{background:#dff5ee!important;color:#087f70!important;box-shadow:none!important;border:1px solid #c8e9df}.brand-accent{color:#087f70!important}
+.nav-link{color:#4f6d67!important;border-radius:10px!important}.nav-link:hover,.nav-link:focus{background:#e8f4f0!important;color:#087f70!important}
+.navbar-toggler{background:#f4faf8!important}.navbar-toggler-icon{filter:none!important}
+.mk-hero{background:radial-gradient(ellipse at 90% 12%,rgba(25,165,141,.12),transparent 35%),radial-gradient(ellipse at 4% 90%,rgba(8,127,112,.07),transparent 40%),#f6faf9!important;padding-block:clamp(42px,6vw,78px)!important}
+.mk-hero:before{opacity:.23!important}.mk-eyebrow{color:#087f70!important;background:#fff!important;border-color:#dce9e5!important;box-shadow:0 4px 16px rgba(24,65,57,.04)!important}.eyebrow-dot{background:#19a58d!important;box-shadow:0 0 0 5px rgba(25,165,141,.12)!important}
+.mk-hero h1{color:#18312e!important;letter-spacing:-.065em!important;font-weight:850!important}.mk-gradient-text{background:linear-gradient(100deg,#087f70,#159d87)!important;background-clip:text!important;-webkit-background-clip:text!important;color:transparent!important}.mk-hero-copy{color:#607773!important}
+.mk-search-box{border:1px solid #d5e5e0!important;background:#fff!important;box-shadow:0 12px 34px rgba(24,65,57,.08)!important;border-radius:18px!important}.mk-search-box input{color:#18312e!important}.mk-search-box input::placeholder{color:#80948f!important}.mk-search-box>i{color:#087f70!important}
+.btn-primary{--bs-btn-bg:#087f70;--bs-btn-border-color:#087f70;--bs-btn-hover-bg:#06695d;--bs-btn-hover-border-color:#06695d;--bs-btn-active-bg:#05594f;--bs-btn-active-border-color:#05594f;--bs-btn-color:#fff;box-shadow:0 5px 14px rgba(8,127,112,.14)}
+.btn-light-outline{background:#fff!important;border:1px solid #d5e5e0!important;color:#24443e!important}.btn-light-outline:hover{background:#f0f8f6!important;border-color:#a8d4c8!important}
+.mk-hero-links a,.mk-text-link,.mk-prescription-link{color:#087f70!important}.mk-hero-links a:hover,.mk-text-link:hover{color:#05594f!important}
+.hero-product-card,.floating-bubble,.mk-product-card,.mk-category-card,.mk-step-card,.mk-pharmacy-card,.mk-comparison-card,.mk-form-card,.mk-panel-card,.mk-order-summary,.mk-cart-store-card,.mk-order-card,.auth-card,.profile-card,.profile-panel,.hp-metric-card,.hp-review-card,.hp-editorial-card,.hp-promotion-card{background:#fff!important;border-color:#dce9e5!important;box-shadow:var(--mk-shadow)!important;color:#18312e!important}
+.fake-search,.fake-note,.trust-icon,.category-icon,.step-icon,.stat-icon,.mk-metric-icon,.hp-metric-icon{background:#e8f4f0!important;color:#087f70!important;border-color:#dce9e5!important}
+.fake-store-text strong,.fake-price strong,.floating-bubble strong,.trust-item strong,.mk-category-card .category-name,.mk-product-card h3,.mk-product-card h3 a,.mk-section-heading h2,.mk-dashboard-heading h1,.mk-form-intro h1,.mk-panel-heading h2,.footer-title{color:#18312e!important}
+.fake-store-text small,.fake-price small,.floating-bubble small,.fake-note,.trust-item small{color:#607773!important}
+.mk-trust-strip{background:#fff!important;border-color:#dce9e5!important}.mk-section,.mk-how-section,.mk-form-page,.mk-dashboard-page{background:#f6faf9!important}.mk-section-muted,.hp-trust-section,.hp-reviews-section{background:#f0f8f6!important}
+.mk-category-card:hover,.mk-product-card:hover,.mk-step-card:hover,.mk-pharmacy-card:hover{border-color:#a8d4c8!important;box-shadow:var(--mk-shadow-hover)!important;transform:translateY(-3px)}
+.stock-pill.stock-ok{background:#e5f7ee!important;color:#16734e!important}.stock-pill.stock-low{background:#fff5df!important;color:#875c0b!important}.verified-label{background:#e5f7ee!important;color:#16734e!important}
+.mk-section-kicker,.mk-section-heading .mk-section-kicker,.hp-kicker{color:#087f70!important}.mk-section-heading h2{font-weight:820!important;letter-spacing:-.05em!important}.mk-section-heading p{color:#607773!important}
+.mk-form-card,.auth-card{border-radius:22px!important}.form-control,.form-select,input,select,textarea{border-color:#d5e5e0!important;background-color:#fff!important;color:#18312e!important}.form-control:focus,.form-select:focus,input:focus,select:focus,textarea:focus{border-color:#48b6a2!important;box-shadow:0 0 0 .2rem rgba(25,165,141,.13)!important}
+.mk-table{--mk-table-color:#18312e;--mk-table-bg:#fff;--mk-table-border-color:#dce9e5}.mk-table thead th{background:#f0f8f6!important;color:#42635c!important}.mk-panel-heading{background:#fff!important;border-color:#dce9e5!important}.mk-footer{background:#183b36!important;color:#eaf5f2!important}.mk-footer .brand,.mk-footer .brand span:last-child,.mk-footer .footer-title{color:#fff!important}.mk-footer .brand-accent{color:#79dbc5!important}.mk-footer .footer-copy,.mk-footer p,.mk-footer a{color:#c4dad4!important}.mk-footer a:hover{color:#fff!important}.mk-footer .footer-note{background:#204942!important;border-color:#37675d!important}.mk-footer .footer-note p{color:#c4dad4!important}
+.footer-social-banner{background:#204942!important;border-color:#37675d!important}.footer-social-copy h2{color:#fff!important}.footer-social-copy p{color:#c4dad4!important}.mk-footer .footer-social-link{background:#28554c!important;border-color:#47786d!important;color:#fff!important}
+.mk-bottom-cta{background:#f6faf9!important}.mk-cta-inner{background:linear-gradient(120deg,#087f70,#11695f)!important;box-shadow:0 14px 30px rgba(8,127,112,.17)!important}.mk-cta-inner h2,.mk-cta-inner p{color:#fff!important}
+.hp-section-heading h2,.hp-metric-card h3,.hp-metric-card strong,.hp-editorial-card h2,.hp-review-author strong,.hp-promotion-copy h3{color:#18312e!important}.hp-section-heading p,.hp-metric-card p,.hp-editorial-body,.hp-review-card blockquote,.hp-review-author span,.hp-review-author time,.hp-promotion-copy p{color:#607773!important}.hp-keyword-list a{background:#fff!important;color:#42635c!important;border-color:#dce9e5!important}.hp-keyword-list a:hover{background:#e8f4f0!important;color:#087f70!important}
+.alert{border-radius:14px}.skip-link:focus{background:#fff;color:#087f70;z-index:2000}
+:focus-visible{outline:3px solid #19a58d!important;outline-offset:3px!important}
+@media(max-width:991.98px){.navbar-collapse{padding:12px 0 8px}.nav-account{padding-top:10px;border-top:1px solid #e5efeb}.mk-hero-visual{margin-top:8px}}
+@media(max-width:575.98px){.mk-hero h1{letter-spacing:-.055em!important}.mk-search-box{box-shadow:0 8px 24px rgba(24,65,57,.06)!important}.mk-section-heading{gap:12px}.mk-hero-links{gap:13px 17px}.mk-hero-links a{font-size:.82rem}.hp-section-heading{margin-bottom:18px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}

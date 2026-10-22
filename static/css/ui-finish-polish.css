@@ -1,0 +1,288 @@
+/*
+  MedMitra finishing pass: small visual and responsive corrections only.
+  This file intentionally changes no application logic, data, models or URLs.
+  Existing light-mode palette/layout is retained; dark-only refinements are scoped.
+*/
+
+/* Prevent long user/catalogue values from stretching cards and grid columns. */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+html { scroll-padding-top: 5.5rem; }
+body { min-width: 320px; overflow-x: clip; }
+img, picture, video, canvas, svg { max-width: 100%; }
+main,
+main > section,
+.container,
+.container-fluid,
+.row > *,
+.mm-section-heading > *,
+.mk-dashboard-heading > *,
+.mk-panel-heading > *,
+.medicine-results-heading > * { min-width: 0; }
+
+h1, h2, h3, h4, h5, h6,
+.product-card-body h3,
+.mm-live-product-copy h3,
+.mm-showcase-copy h3,
+.medicine-result-content h3,
+.comparison-store-info h3,
+.store-header-copy h1 {
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+p, small, .form-text, .table-subtext, .medicine-generic,
+.medicine-pharmacy strong, .mm-footer-column a {
+  overflow-wrap: anywhere;
+}
+
+/* Consistent controls without replacing existing brand colors. */
+.btn {
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+  line-height: 1.25;
+  white-space: normal;
+  max-width: 100%;
+  text-align: center;
+}
+.btn .bi,
+.nav-link .bi { flex: 0 0 auto; line-height: 1; }
+.btn:focus-visible,
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--mk-accent, #168c80) 44%, transparent);
+  outline-offset: 2px;
+}
+.form-control,
+.form-select,
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+select,
+textarea {
+  min-width: 0;
+  max-width: 100%;
+  line-height: 1.45;
+}
+.form-control:not([type="file"]),
+.form-select { min-height: 44px; }
+textarea.form-control,
+textarea { min-height: 108px; resize: vertical; }
+input[type="file"],
+.form-control[type="file"] { width: 100%; min-width: 0; max-width: 100%; }
+.form-check,
+.form-switch,
+.form-check-label { min-width: 0; }
+.form-check-label { line-height: 1.45; }
+.field-error,
+.invalid-feedback,
+.alert { overflow-wrap: anywhere; }
+
+/* Product/store image frames remain stable even when images have mixed dimensions. */
+.medicine-result-card { display: flex; flex-direction: column; height: 100%; min-width: 0; overflow: hidden; }
+.medicine-result-visual { position: relative; min-width: 0; overflow: hidden; }
+.medicine-result-visual > img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  min-height: 168px;
+  max-height: 220px;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  object-position: center;
+  padding: 12px;
+  background: #fff;
+}
+.medicine-result-content { display: flex; flex: 1 1 auto; flex-direction: column; min-width: 0; }
+.medicine-result-content h3 { line-height: 1.35; }
+.medicine-pharmacy { min-width: 0; }
+.medicine-pharmacy > span:nth-child(2) { min-width: 0; }
+.medicine-pharmacy strong,
+.medicine-pharmacy small { display: block; }
+.medicine-compare-button { margin-top: auto; }
+.mm-live-image,
+.mm-showcase-image,
+.product-visual,
+.product-photo,
+.detail-product-art,
+.medicine-result-visual { min-width: 0; }
+.mm-live-image img,
+.mm-showcase-image img,
+.product-visual img,
+.product-photo {
+  max-width: 100%;
+  object-position: center;
+}
+
+/* Horizontal rails should scroll by touch/trackpad without expanding the page. */
+.mm-image-rail,
+.mm-product-rail,
+.mm-review-rail,
+.mm-category-grid,
+.mm-live-product-rail,
+.mm-image-strip-rail {
+  max-width: 100%;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+}
+.mm-image-rail > *,
+.mm-product-rail > *,
+.mm-review-rail > *,
+.mm-live-product-rail > * { min-width: 0; }
+.mm-offer-image-only,
+.mm-category-tile,
+.mm-live-product-card,
+.mm-review-card { min-width: 0; }
+.mm-category-name,
+.mm-review-card blockquote,
+.mm-live-product-copy h3 { overflow-wrap: anywhere; }
+
+/* Navigation and the slide-in menu keep readable targets on narrow screens. */
+.site-nav { z-index: 1030; }
+.site-nav .navbar-brand { flex-shrink: 0; }
+.site-nav .nav-quick { min-width: 0; }
+.navbar-toggler { min-width: 44px; min-height: 44px; }
+.mm-mobile-drawer { max-width: min(390px, 94vw); }
+.mm-drawer-links > a { min-width: 0; }
+.mm-drawer-links > a > span { min-width: 0; }
+.mm-drawer-links small { overflow-wrap: anywhere; }
+
+/* Forms, order panels and dashboard headings wrap instead of overlapping. */
+.mk-form-card,
+.mk-panel-card,
+.mk-order-summary,
+.mk-order-card,
+.mk-cart-store-card,
+.mk-stat-card,
+.profile-card,
+.profile-panel { min-width: 0; }
+.mk-form-card img,
+.mk-panel-card img { max-width: 100%; height: auto; }
+.mk-dashboard-heading,
+.dashboard-head-actions,
+.mk-panel-heading,
+.medicine-results-heading,
+.order-card-head,
+.order-card-actions,
+.form-actions { min-width: 0; }
+.dashboard-head-actions { flex-wrap: wrap; }
+.order-card-actions { flex-wrap: wrap; }
+.form-actions .btn { min-width: 0; }
+.table-responsive { max-width: 100%; border-radius: inherit; }
+.mk-table { width: 100%; }
+
+/* Footer social icons are equal-sized and can wrap without widening the page. */
+.mm-footer-intro > *,
+.mm-footer-columns > *,
+.footer-social-copy { min-width: 0; }
+.footer-social-banner { min-width: 0; gap: 18px; }
+.footer-social-links { min-width: 0; max-width: 100%; flex-wrap: wrap; align-items: center; }
+.mk-footer .footer-social-link {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 44px;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  line-height: 1;
+}
+.mk-footer .footer-social-link i { font-size: 1.15rem; line-height: 1; }
+.footer-bottom { min-width: 0; flex-wrap: wrap; }
+.footer-bottom > * { min-width: 0; }
+
+/* Dark mode only: improve subdued text, control edges and hover/focus visibility.
+   No light-mode colors are overridden below this point. */
+html[data-theme="dark"] .text-muted,
+html[data-theme="dark"] .text-secondary,
+html[data-theme="dark"] .form-text,
+html[data-theme="dark"] .table-subtext,
+html[data-theme="dark"] .medicine-generic,
+html[data-theme="dark"] .medicine-card-updated,
+html[data-theme="dark"] .mm-section-heading p,
+html[data-theme="dark"] .mk-form-intro p,
+html[data-theme="dark"] .mk-dashboard-heading p,
+html[data-theme="dark"] .mm-footer-trust small {
+  color: #b5cbc5 !important;
+}
+html[data-theme="dark"] .table,
+html[data-theme="dark"] .table > :not(caption) > * > * {
+  border-color: #2b4741;
+}
+html[data-theme="dark"] .form-control:focus,
+html[data-theme="dark"] .form-select:focus,
+html[data-theme="dark"] textarea:focus {
+  border-color: #67dcc5 !important;
+  box-shadow: 0 0 0 .2rem rgba(103, 220, 197, .18) !important;
+}
+html[data-theme="dark"] .btn-outline-secondary,
+html[data-theme="dark"] .btn-outline-primary {
+  border-color: #52756b;
+}
+html[data-theme="dark"] .medicine-result-visual > img,
+html[data-theme="dark"] .product-photo { background: #f7faf9; }
+
+@media (max-width: 991.98px) {
+  .mm-section-heading,
+  .mk-dashboard-heading,
+  .medicine-results-heading { align-items: flex-start; flex-wrap: wrap; }
+  .mm-section-heading .mm-rail-controls { margin-left: auto; }
+  .mm-footer-intro { gap: 20px; }
+  .footer-social-banner { align-items: flex-start; flex-wrap: wrap; }
+  .footer-social-links { justify-content: flex-start; }
+}
+
+@media (max-width: 767.98px) {
+  .container { --bs-gutter-x: 1.35rem; }
+  .mk-form-page,
+  .mk-dashboard-page { overflow-x: clip; }
+  .mk-dashboard-heading { gap: 14px; }
+  .dashboard-head-actions { width: 100%; }
+  .dashboard-head-actions > .btn { max-width: 100%; }
+  .mk-panel-heading { gap: 12px; align-items: flex-start; }
+  .medicine-results-count { margin-left: auto; }
+  .footer-social-banner { padding: 20px; }
+  .mm-footer-columns { align-items: start; }
+}
+
+@media (max-width: 575.98px) {
+  .container { --bs-gutter-x: 1.1rem; }
+  .mm-section-heading { gap: 12px; }
+  .mm-section-heading h2 { max-width: 100%; }
+  .mm-section-heading .mm-view-all { white-space: normal; }
+  .mm-hero-search input { min-width: 0; }
+  .mk-form-card { padding: clamp(14px, 4vw, 20px); }
+  .mk-panel-heading { flex-wrap: wrap; }
+  .mk-panel-heading .mk-text-link { white-space: nowrap; }
+  .form-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .form-actions .btn { flex: 1 1 125px; }
+  .footer-social-banner { padding: 18px 15px; }
+  .footer-social-links { gap: 8px; }
+  .mk-footer .footer-social-link { flex-basis: 42px; width: 42px; min-width: 42px; height: 42px; min-height: 42px; }
+  .footer-bottom { align-items: flex-start; }
+  .medicine-result-visual > img { min-height: 145px; max-height: 190px; padding: 9px; }
+  .mm-image-rail,
+  .mm-product-rail,
+  .mm-review-rail { gap: 12px; scroll-padding-inline: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}
+
+/* Targeted spacing: Shop by Category tiles only. Keep the section position and all other rails unchanged. */
+.mm-category-section .mm-category-grid {
+  column-gap: 18px;
+  row-gap: 16px;
+}
+@media (max-width: 575.98px) {
+  .mm-category-section .mm-category-grid {
+    column-gap: 12px;
+    row-gap: 12px;
+  }
+}

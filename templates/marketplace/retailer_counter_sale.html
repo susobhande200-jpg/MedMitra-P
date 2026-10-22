@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Walk-in counter sale — {{ pharmacy.name }} | MedMitra{% endblock %}
+{% block content %}
+<section class="mk-dashboard-page"><div class="container" style="max-width:1100px"><div class="mk-dashboard-heading"><div><div class="mk-section-kicker">STORE OPERATIONS</div><h1>Walk-in <span class="mk-gradient-text">counter sale</span></h1><p>Record a medicine sale for a customer visiting the pharmacy in person. Stock updates and the public receipt are created together.</p></div><a class="btn btn-soft rounded-pill px-4" href="{% url 'retailer_orders' %}?pharmacy={{ pharmacy.pk }}"><i class="bi bi-arrow-left me-1"></i> Store orders</a></div>
+<div class="mk-notice mb-4"><i class="bi bi-info-circle-fill"></i><div><strong>{{ pharmacy.name }}</strong><p class="mb-0">Only this store's active, non-expired marketplace listings can be sold. Reserved stock for online orders is not available for walk-in sales.</p></div></div>
+<form method="post" class="mk-form-card mm-counter-sale-form" id="counter-sale-form">{% csrf_token %}<input type="hidden" name="pharmacy_id" value="{{ pharmacy.pk }}"><div class="row g-3"><div class="col-md-6"><label for="counter-customer-name" class="form-label">Customer name (optional)</label><input id="counter-customer-name" name="customer_name" class="form-control" maxlength="160" autocomplete="off" placeholder="Walk-in customer"></div><div class="col-md-6"><label for="counter-payment-method" class="form-label">Payment received by</label><select id="counter-payment-method" name="payment_method" class="form-select">{% for value,label in payment_methods %}<option value="{{ value }}">{{ label }}</option>{% endfor %}</select></div></div>
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mt-4 mb-3"><div><h2 class="h5 mb-1">Items sold</h2><p class="form-text mb-0">Search once, then choose one or more medicines and quantities.</p></div><button class="btn btn-outline-primary rounded-pill" type="button" id="add-counter-row"><i class="bi bi-plus-lg me-1"></i> Add another medicine</button></div>
+<div class="mb-3"><label for="counter-product-search" class="form-label">Search your medicine listings</label><input id="counter-product-search" type="search" class="form-control" placeholder="Type a product or generic name" autocomplete="off"></div>
+<div id="counter-sale-rows" class="counter-sale-rows"><div class="counter-sale-row"><div class="counter-sale-row-product"><label class="form-label">Medicine</label><select name="listing_id" class="form-select counter-listing-select" required><option value="">Choose a medicine</option>{% for listing in listings %}<option value="{{ listing.pk }}" data-search="{{ listing.product.brand_name|lower }} {{ listing.product.generic_name|lower }} {{ listing.product.strength|lower }}" data-price="{{ listing.selling_price }}" data-available="{{ listing.sellable_quantity }}">{{ listing.product.brand_name }}{% if listing.product.strength %} {{ listing.product.strength }}{% endif %} — {{ listing.sellable_quantity }} sellable — ₹{{ listing.selling_price }}</option>{% endfor %}</select><small class="selected-stock-note text-secondary"></small></div><div class="counter-sale-row-qty"><label class="form-label">Quantity</label><input name="quantity" type="number" class="form-control counter-qty" min="1" max="9999" value="1" required></div><div class="counter-sale-row-price"><span class="form-label d-block">Line total</span><strong class="counter-line-total">₹0.00</strong></div><button type="button" class="btn btn-outline-danger counter-remove-row" aria-label="Remove medicine row" title="Remove row"><i class="bi bi-trash"></i></button></div></div>
+<div class="counter-sale-estimate"><span>Estimated total</span><strong id="counter-sale-total">₹0.00</strong></div><div class="mk-notice mt-3"><i class="bi bi-receipt"></i><div><strong>Receipt and inventory</strong><p class="mb-0">A receipt link will be generated after the sale is saved. The server verifies stock and prices before deducting inventory; browser totals are only an estimate.</p></div></div><div class="form-actions"><a class="btn btn-soft rounded-pill px-4" href="{% url 'retailer_dashboard' %}?pharmacy={{ pharmacy.pk }}">Cancel</a><button type="submit" class="btn btn-primary rounded-pill px-4">Save sale & create receipt <i class="bi bi-arrow-right ms-1"></i></button></div></form>
+{% if not listings %}<div class="mk-empty-state mt-4"><i class="bi bi-box-seam"></i><h3>No sellable listings</h3><p>Add active listings with available non-expired stock before recording a counter sale.</p><a href="{% url 'retailer_listing_add' %}?pharmacy={{ pharmacy.pk }}" class="btn btn-primary rounded-pill">Manage inventory</a></div>{% endif %}</div></section>
+{% endblock %}
+{% block extra_js %}
+<script>
+(() => {
+  const rows = document.getElementById('counter-sale-rows');
+  const addButton = document.getElementById('add-counter-row');
+  const search = document.getElementById('counter-product-search');
+  const totalElement = document.getElementById('counter-sale-total');
+  const money = value => '₹' + (Number(value) || 0).toFixed(2);
+  const applyFilter = () => {
+    const term = (search?.value || '').trim().toLowerCase();
+    rows?.querySelectorAll('.counter-listing-select').forEach(select => {
+      [...select.options].forEach(option => {
+        option.hidden = !!term && !!option.value && !option.selected && !(option.dataset.search || option.textContent).toLowerCase().includes(term);
+      });
+    });
+  };
+  const recalc = () => {
+    let total = 0;
+    rows?.querySelectorAll('.counter-sale-row').forEach(row => {
+      const select = row.querySelector('.counter-listing-select');
+      const qty = row.querySelector('.counter-qty');
+      const option = select?.selectedOptions[0];
+      const price = option?.value ? Number(option.dataset.price || 0) : 0;
+      const available = option?.value ? Number(option.dataset.available || 0) : 0;
+      if (qty) qty.max = Math.max(1, available);
+      if (row.querySelector('.selected-stock-note')) row.querySelector('.selected-stock-note').textContent = option?.value ? `Available for walk-in sale: ${available}` : '';
+      const lineTotal = price * Math.max(0, Number(qty?.value || 0));
+      total += lineTotal;
+      if (row.querySelector('.counter-line-total')) row.querySelector('.counter-line-total').textContent = money(lineTotal);
+    });
+    if (totalElement) totalElement.textContent = money(total);
+  };
+  const bindRow = row => {
+    row.querySelector('.counter-listing-select')?.addEventListener('change', () => { if (search) search.value = ''; applyFilter(); recalc(); });
+    row.querySelector('.counter-qty')?.addEventListener('input', recalc);
+    row.querySelector('.counter-remove-row')?.addEventListener('click', () => {
+      if (rows.querySelectorAll('.counter-sale-row').length > 1) row.remove();
+      else { row.querySelector('select').value = ''; row.querySelector('input[name="quantity"]').value = '1'; }
+      recalc();
+    });
+  };
+  rows?.querySelectorAll('.counter-sale-row').forEach(bindRow);
+  addButton?.addEventListener('click', () => {
+    const first = rows.querySelector('.counter-sale-row');
+    if (!first) return;
+    const clone = first.cloneNode(true);
+    clone.querySelector('select').value = '';
+    clone.querySelector('input[name="quantity"]').value = '1';
+    clone.querySelector('.counter-line-total').textContent = money(0);
+    clone.querySelector('.selected-stock-note').textContent = '';
+    rows.appendChild(clone); bindRow(clone); recalc();
+  });
+  search?.addEventListener('input', applyFilter);
+  recalc(); applyFilter();
+})();
+</script>
+{% endblock %}

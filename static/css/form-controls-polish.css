@@ -1,0 +1,62 @@
+/* Consistent, visibly checked and comfortably clickable form controls. */
+:root { --mm-check-accent: #087f70; }
+input[type="checkbox"], input[type="radio"] {
+  accent-color: var(--mm-check-accent);
+  cursor: pointer;
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  flex-shrink: 0;
+}
+.form-check-input[type="checkbox"],
+.form-check-input[type="radio"] {
+  width: 1.12rem !important;
+  height: 1.12rem !important;
+  min-width: 1.12rem;
+  margin: .18rem .42rem 0 0 !important;
+  border: 1.5px solid #81958e !important;
+  background-color: #fff !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  cursor: pointer;
+  box-shadow: none;
+}
+.form-check-input[type="checkbox"]:checked,
+.form-check-input[type="radio"]:checked {
+  border-color: var(--mm-check-accent) !important;
+  background-color: var(--mm-check-accent) !important;
+}
+.form-check-input[type="checkbox"]:focus-visible,
+.form-check-input[type="radio"]:focus-visible,
+input[type="checkbox"]:focus-visible,
+input[type="radio"]:focus-visible {
+  outline: 3px solid rgba(25,165,141,.28) !important;
+  outline-offset: 2px;
+}
+.form-check, .form-switch {
+  display: flex;
+  align-items: flex-start;
+  gap: .25rem;
+  min-height: 1.5rem;
+}
+.form-check-label, label:has(> input[type="checkbox"]), label:has(> input[type="radio"]),
+label:has(.form-check-input) {
+  cursor: pointer;
+  user-select: none;
+}
+.mm-fulfilment-option, .mm-add-product-toggle, .mm-payment-option, .fulfilment-option {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.mm-add-product-toggle {
+  display: flex; align-items: center; gap: .8rem; width: 100%; padding: 15px 16px;
+  border: 1px solid var(--mk-border, #dce9e5); border-radius: 15px;
+  background: var(--mk-card, #fff); color: var(--mk-ink, #18312e);
+}
+.mm-add-product-toggle > span { display: flex; flex-direction: column; gap: 3px; }
+.mm-add-product-toggle strong { font-size: .9rem; font-weight: 800; }
+.mm-add-product-toggle small { color: var(--mk-muted, #607773); font-size: .76rem; }
+.mm-add-product-toggle > i { margin-left: auto; font-size: 1.25rem; color: var(--mk-accent, #087f70); }
+.mm-add-product-toggle:has(input:checked) { border-color: var(--mk-accent, #087f70); box-shadow: 0 0 0 2px rgba(25,165,141,.12); }
+.mm-new-product-field[hidden] { display: none !important; }

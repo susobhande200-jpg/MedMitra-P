@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Find medicines — MedMitra{% endblock %}
+{% block meta_description %}Search medicines, compare listed prices and find participating pharmacies with reported stock availability on MedMitra.{% endblock %}
+{% block extra_head %}<link href="{% static 'css/medicine-search-polish.css' %}" rel="stylesheet">{% endblock %}
+{% block content %}
+<section class="medicine-search-hero">
+  <div class="container">
+    <div class="medicine-search-heading">
+      <div class="medicine-eyebrow"><span class="medicine-eyebrow-icon"><i class="bi bi-capsule-pill"></i></span> THE MEDMITRA MEDICINE DIRECTORY</div>
+      <h1>Find the right listing.<br><span>Compare with confidence.</span></h1>
+      <p>Search by medicine name, generic name or strength, then compare prices and participating pharmacies near you.</p>
+      <div class="medicine-assurances"><span><i class="bi bi-shield-check"></i> Pharmacy listings reviewed</span><span><i class="bi bi-arrow-left-right"></i> Compare listed prices</span><span><i class="bi bi-info-circle"></i> Confirm stock before visiting</span></div>
+    </div>
+    <form class="medicine-filter-panel" method="get" action="{% url 'medicine_search' %}" role="search">
+      <div class="medicine-filter-search"><label for="medicineQuery">What medicine are you looking for?</label><div class="medicine-search-input"><i class="bi bi-search" aria-hidden="true"></i><input id="medicineQuery" name="q" type="search" value="{{ q }}" placeholder="Try paracetamol, vitamin C, 500 mg…" autocomplete="off"><button class="btn btn-primary" type="submit">Search medicines <i class="bi bi-arrow-right ms-1"></i></button></div></div>
+      <div class="medicine-filter-grid">
+        <div><label for="filterCategory">Category</label><select class="form-select" id="filterCategory" name="category"><option value="">All categories</option>{% for category in categories %}<option value="{{ category.slug }}" {% if selected_category == category.slug %}selected{% endif %}>{{ category.name }}</option>{% endfor %}</select></div>
+        <div><label for="filterPincode">PIN code</label><input class="form-control" id="filterPincode" name="pincode" inputmode="numeric" maxlength="10" value="{{ pincode }}" placeholder="Enter PIN code"></div>
+        <div><label for="filterFulfilment">Get it by</label><select class="form-select" id="filterFulfilment" name="fulfilment"><option value="">Delivery or pickup</option><option value="delivery" {% if fulfilment == 'delivery' %}selected{% endif %}>Delivery</option><option value="pickup" {% if fulfilment == 'pickup' %}selected{% endif %}>Store pickup</option></select></div>
+        <div><label for="filterSort">Sort results</label><select class="form-select" id="filterSort" name="sort"><option value="relevance" {% if sort == 'relevance' %}selected{% endif %}>Medicine name</option><option value="price_low" {% if sort == 'price_low' %}selected{% endif %}>Lowest price first</option><option value="discount" {% if sort == 'discount' %}selected{% endif %}>Biggest discount</option></select></div>
+      </div>
+      <div class="medicine-filter-footer"><span><i class="bi bi-sliders2 me-1"></i> Refine your results</span><div><a class="medicine-reset-link" href="{% url 'medicine_search' %}">Clear filters</a><button class="btn btn-outline-primary" type="submit">Apply filters</button></div></div>
+    </form>
+  </div>
+</section>
+<section class="medicine-results-section">
+  <div class="container">
+    <div class="medicine-results-heading"><div><div class="medicine-eyebrow">YOUR SEARCH RESULTS</div><h2>{% if q %}Results for “{{ q }}”{% else %}Available medicine listings{% endif %}</h2><p>Compare information provided by participating pharmacies.</p></div><div class="medicine-results-count"><strong>{{ result_count }}</strong><span>matching<br>listing{{ result_count|pluralize }}</span></div></div>
+    <div class="medicine-safety-note"><i class="bi bi-info-circle-fill"></i><span>Prices and stock are retailer-reported and may change. Check with the pharmacy before travelling. Medicines with different names or strengths are not automatically interchangeable.</span></div>
+    <div class="row g-3 g-xl-4 medicine-results-grid">
+      {% for listing in listings %}
+      <div class="col-12 col-sm-6 col-xl-4"><article class="medicine-result-card">
+        <div class="medicine-result-visual">{% if listing.image %}<img src="{{ listing.image.url }}" alt="{{ listing.product.brand_name }} medicine" loading="lazy">{% elif listing.product.image %}<img src="{{ listing.product.image.url }}" alt="{{ listing.product.brand_name }} medicine" loading="lazy">{% else %}<span class="medicine-placeholder"><i class="bi bi-capsule-pill"></i><small>Medicine listing</small></span>{% endif %}{% if listing.discount_percent %}<span class="medicine-discount">{{ listing.discount_percent }}% off</span>{% endif %}</div>
+        <div class="medicine-result-content"><div class="medicine-card-meta"><span>{{ listing.product.manufacturer|default:listing.product.get_dosage_form_display }}</span>{% if listing.product.requires_prescription %}<span class="medicine-rx"><i class="bi bi-file-medical"></i> Prescription</span>{% endif %}</div>
+          <h3><a href="{% url 'medicine_detail' listing.product_id %}">{{ listing.product.brand_name }}{% if listing.product.strength %} <span>{{ listing.product.strength }}</span>{% endif %}</a></h3><p class="medicine-generic">{{ listing.product.generic_name|default:"Generic details not provided" }}{% if listing.product.pack_size %} · {{ listing.product.pack_size }}{% endif %}</p>
+          <div class="medicine-price-line"><div><strong>₹{{ listing.selling_price|floatformat:2 }}</strong>{% if listing.mrp > listing.selling_price %}<del>₹{{ listing.mrp|floatformat:2 }}</del>{% endif %}</div><span class="medicine-stock {% if listing.inventory_is_fresh and listing.in_stock %}is-available{% else %}needs-confirmation{% endif %}"><i class="bi {% if listing.inventory_is_fresh and listing.in_stock %}bi-check-circle-fill{% else %}bi-clock-history{% endif %}"></i>{% if listing.inventory_is_fresh and listing.in_stock %}Reported in stock{% else %}Confirm stock{% endif %}</span></div>
+          <a class="medicine-pharmacy" href="{% url 'pharmacy_detail' listing.pharmacy.slug %}"><span class="medicine-pharmacy-icon"><i class="bi bi-shop"></i></span><span><strong>{{ listing.pharmacy.name }}</strong><small><i class="bi bi-geo-alt"></i> {{ listing.pharmacy.city }} · {{ listing.pharmacy.pincode }}</small></span><i class="bi bi-arrow-up-right ms-auto"></i></a>
+          <div class="medicine-service-tags">{% if listing.pharmacy.offers_delivery %}<span><i class="bi bi-truck"></i> Delivery</span>{% endif %}{% if listing.pharmacy.offers_pickup %}<span><i class="bi bi-bag-check"></i> Pickup</span>{% endif %}</div>
+          <div class="medicine-card-updated">Updated {{ listing.last_stock_update|timesince }} ago{% if not listing.inventory_is_fresh %} · Please confirm availability{% endif %}</div>
+          <div class="medicine-card-actions">
+            {% if user.is_authenticated %}
+              <form method="post" action="{% url 'cart_add' listing.id %}" class="medicine-add-cart-form">{% csrf_token %}<input type="hidden" name="quantity" value="1"><button class="btn btn-primary medicine-add-cart-button" type="submit"><i class="bi bi-bag-plus" aria-hidden="true"></i> Add to cart</button></form>
+            {% else %}
+              <a class="btn btn-primary medicine-add-cart-button" href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}"><i class="bi bi-bag-plus" aria-hidden="true"></i> Sign in to add</a>
+            {% endif %}
+            <a class="btn btn-outline-primary medicine-compare-button" href="{% url 'medicine_detail' listing.product_id %}">Compare <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+      </article></div>
+      {% empty %}<div class="col-12"><div class="medicine-empty-state"><span><i class="bi bi-search"></i></span><div class="medicine-eyebrow">NO MATCHES THIS TIME</div><h2>Let’s try another search</h2><p>Try a shorter medicine name, clear a filter or search using the generic name. A missing listing does not mean a medicine is unavailable everywhere.</p><div class="d-flex justify-content-center flex-wrap gap-2"><a class="btn btn-primary rounded-pill px-4" href="{% url 'medicine_search' %}">Clear all filters</a><a class="btn btn-outline-primary rounded-pill px-4" href="{% url 'pharmacy_finder' %}">Find a pharmacy</a></div></div></div>{% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

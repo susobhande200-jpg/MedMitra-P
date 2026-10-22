@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{% if listing %}Edit{% else %}Add{% endif %} medicine — MedMitra{% endblock %}
+{% block content %}
+<section class="mk-form-page"><div class="container"><div class="row justify-content-center"><div class="col-xl-8">
+  <div class="mk-form-intro"><div class="mk-section-kicker">{{ pharmacy.name }}</div><h1>{% if listing %}Update a medicine <span class="mk-gradient-text">listing</span>{% else %}Add a medicine <span class="mk-gradient-text">listing</span>{% endif %}</h1><p>Choose an existing catalogue item or add a new medicine, then set your shop's price, stock and batch information.</p></div>
+  {% if not pharmacy.verified %}<div class="alert alert-info"><i class="bi bi-info-circle me-2"></i>You can prepare your medicine inventory while verification is pending. Listings stay hidden from customers until an administrator approves your pharmacy.</div>{% endif %}
+  <form method="post" enctype="multipart/form-data" class="mk-form-card" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="form-section-heading"><span class="form-section-icon"><i class="bi bi-capsule-pill"></i></span><div><h2>Medicine details</h2><p>Pick a catalogue item or add one that is missing.</p></div></div>
+    <div class="row g-3">
+      {% for field in form %}
+        {% if field.name == 'new_catalogue_product' %}
+          <div class="col-12">
+            <label class="mm-add-product-toggle" for="{{ field.id_for_label }}">
+              {{ field }}
+              <span><strong>{{ field.label }}</strong><small>Use this if the medicine is not shown in the existing catalogue.</small></span>
+              <i class="bi bi-plus-circle" aria-hidden="true"></i>
+            </label>
+            {% for error in field.errors %}<div class="field-error" role="alert">{{ error }}</div>{% endfor %}
+          </div>
+        {% elif field.name == 'new_product_name' or field.name == 'new_generic_name' or field.name == 'new_strength' or field.name == 'new_dosage_form' or field.name == 'new_pack_size' or field.name == 'new_manufacturer' or field.name == 'new_category' or field.name == 'new_requires_prescription' or field.name == 'new_product_image' %}
+          <div class="col-md-6 mm-new-product-field" data-new-product-field>
+            {% if field.field.widget.input_type == 'checkbox' %}<div class="form-check mt-2">{{ field }}<label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label></div>
+            {% else %}<label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span class="required-star">*</span>{% endif %}</label>{{ field }}{% endif %}
+            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+            {% for error in field.errors %}<div class="field-error" role="alert">{{ error }}</div>{% endfor %}
+          </div>
+        {% else %}
+          <div class="col-md-6 {% if field.name == 'product' %}col-12{% endif %}">
+            {% if field.name == 'active' %}<div class="form-check mt-3">{{ field }}<label class="form-check-label" for="{{ field.id_for_label }}">Publish this listing when the pharmacy is approved</label></div>
+            {% elif field.field.widget.input_type == 'checkbox' %}<div class="form-check mt-3">{{ field }}<label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label></div>
+            {% else %}<label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span class="required-star">*</span>{% endif %}</label>{{ field }}{% endif %}
+            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+            {% for error in field.errors %}<div class="field-error" role="alert">{{ error }}</div>{% endfor %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <div class="mk-notice mt-4"><i class="bi bi-shield-exclamation"></i><div><strong>Medicine listing accuracy</strong><p>Do not list expired stock. Selling price cannot exceed MRP. Mark prescription-required products correctly. Admins can review catalogue additions; all customer-facing listings remain gated by pharmacy verification.</p></div></div>
+    <div class="form-actions"><a href="{% url 'retailer_listings' %}?pharmacy={{ pharmacy.id }}" class="btn btn-soft rounded-pill px-4">Cancel</a><button class="btn btn-primary rounded-pill px-4" type="submit">Save listing <i class="bi bi-check2 ms-1"></i></button></div>
+  </form>
+</div></div></div></section>
+{% endblock %}
+{% block extra_js %}<script>
+(() => {
+  const toggle = document.querySelector('[data-new-product-toggle]');
+  const fields = document.querySelectorAll('[data-new-product-field]');
+  const existing = document.querySelector('[data-existing-product]');
+  const sync = () => {
+    const adding = Boolean(toggle && toggle.checked);
+    fields.forEach((field) => { field.hidden = !adding; });
+    if (existing) existing.disabled = adding;
+    if (toggle) toggle.setAttribute('aria-expanded', String(adding));
+  };
+  if (toggle) {
+    toggle.addEventListener('change', sync);
+    sync();
+  }
+})();
+</script>{% endblock %}

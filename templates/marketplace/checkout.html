@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Checkout — MedMitra{% endblock %}
+{% block content %}
+<section class="mk-form-page">
+  <div class="container">
+    <div class="row g-4 justify-content-center">
+      <div class="col-lg-7">
+        <div class="mk-form-intro">
+          <div class="mk-section-kicker">ORDER REQUEST</div>
+          <h1>Confirm with <span class="mk-gradient-text">{{ pharmacy.name }}</span></h1>
+          <p>Choose delivery or pickup. Pickup orders can be placed without choosing a payment method.</p>
+        </div>
+        <form method="post" class="mk-form-card">
+          {% csrf_token %}
+          {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+
+          <h2 class="checkout-section-title"><i class="bi bi-truck"></i> How would you like to receive it?</h2>
+          <div class="fulfilment-options" id="fulfilment-options">
+            {% for radio in form.fulfilment %}
+              <label class="fulfilment-option">{{ radio.tag }}<span><strong>{{ radio.choice_label }}</strong><small>{% if radio.choice_value == 'delivery' %}Delivery fee: ₹{{ pharmacy.delivery_fee|floatformat:2 }}{% else %}Collect when the pharmacy marks the order ready{% endif %}</small></span></label>
+            {% endfor %}
+          </div>
+          {% if form.fulfilment.errors %}<div class="field-error">{{ form.fulfilment.errors }}</div>{% endif %}
+
+          <div class="mm-payment-choices mt-4" id="payment-choices" {% if form.fulfilment.value == 'pickup' %}hidden{% endif %}>
+            <h2 class="checkout-section-title"><i class="bi bi-wallet2"></i> Payment for home delivery</h2>
+            <p class="form-text mb-3">Choose COD or an available online method for delivery. Online orders are not accepted by the pharmacy until payment is verified.</p>
+            <div class="mm-payment-option-list">
+              {% for radio in form.payment_method %}
+                <label class="mm-payment-option" data-payment-choice="{{ radio.choice_value }}">
+                  {{ radio.tag }}
+                  <span>
+                    <strong>{{ radio.choice_label }}</strong>
+                    <small>{% if radio.choice_value == 'cash_on_delivery' %}Pay when your order arrives.{% elif radio.choice_value == 'pay_at_store' %}This option is for collecting from the pharmacy, not home delivery.{% elif radio.choice_value == 'sbi_qr' %}Pay to this pharmacy's UPI / bank details and upload the receipt. The shop verifies the transfer before accepting the order.{% elif radio.choice_value == 'razorpay' %}Pay securely through Razorpay after placing the order.{% endif %}</small>
+                  </span>
+                </label>
+              {% endfor %}
+            </div>
+            {% if form.payment_method.errors %}<div class="field-error">{{ form.payment_method.errors }}</div>{% endif %}
+            {% if payment_qr_settings %}<p class="form-text mt-2">Payment details configured for {{ payment_qr_settings.display_name }}{% if payment_qr_settings.upi_id %} · {{ payment_qr_settings.upi_id }}{% endif %}. Exact amount and receipt upload are shown on the order page.</p>{% endif %}
+            {% if not razorpay_enabled %}<p class="form-text mt-2">Razorpay appears here after the administrator configures the Razorpay key ID and secret.</p>{% endif %}
+          </div>
+          <div class="mk-notice mt-3" id="pickup-payment-note" {% if form.fulfilment.value != 'pickup' %}hidden{% endif %}>
+            <i class="bi bi-shop"></i><div><strong>No payment choice needed to place a pickup request</strong><p>After placing the request, you can pay using the pharmacy's QR / UPI or bank details and upload the receipt for verification. You can also follow the store's collection instructions.</p></div>
+          </div>
+
+          <div class="checkout-field" id="delivery-address-field" {% if form.fulfilment.value == 'pickup' %}hidden{% endif %}>
+            <label class="form-label" for="id_delivery_address">Delivery address</label>
+            {{ form.delivery_address }}
+            <small class="form-text">Required only for home delivery.</small>
+            {% for error in form.delivery_address.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+          </div>
+          <div class="checkout-field">
+            <label class="form-label" for="id_prescription">Prescription (if needed)</label>
+            {{ form.prescription }}
+            <small class="form-text">Prescription-required items cannot be accepted until the linked document has been reviewed and approved.</small>
+            {% if form.prescription.errors %}<div class="field-error">{{ form.prescription.errors }}</div>{% endif %}
+            <a href="{% url 'prescription_upload' %}" class="mk-text-link mt-2 d-inline-flex">Upload a prescription <i class="bi bi-arrow-up-right ms-1"></i></a>
+          </div>
+          <div class="checkout-field"><label class="form-label" for="id_customer_note">Order note (optional)</label>{{ form.customer_note }}</div>
+          <div class="mk-notice mt-4"><i class="bi bi-info-circle-fill"></i><div><strong>Order tracking starts after submission</strong><p>Track pharmacy confirmation, preparation, ready-for-pickup or dispatch status on your order page. A receipt is not proof of payment unless payment status says Paid or Cash collected.</p></div></div>
+          <div class="form-actions"><a href="{% url 'cart_detail' %}" class="btn btn-soft rounded-pill px-4">Back to cart</a><button class="btn btn-primary rounded-pill px-4" type="submit">Place order request <i class="bi bi-arrow-right ms-1"></i></button></div>
+        </form>
+      </div>
+      <div class="col-lg-4">
+        <aside class="mk-order-summary">
+          <div class="summary-store"><span class="cart-store-icon"><i class="bi bi-shop"></i></span><div><strong>{{ pharmacy.name }}</strong><small>{{ pharmacy.city }} · {{ pharmacy.pincode }}</small></div></div>
+          <h2>Order summary</h2>
+          {% for item in cart_items %}<div class="summary-line"><div><strong>{{ item.listing.product.brand_name }}{% if item.listing.product.strength %} {{ item.listing.product.strength }}{% endif %}</strong><small>Qty {{ item.quantity }} × ₹{{ item.listing.selling_price|floatformat:2 }}</small></div><span>₹{{ item.subtotal|floatformat:2 }}</span></div>{% endfor %}
+          <div class="summary-total-line"><span>Items subtotal</span><strong>₹{{ subtotal|floatformat:2 }}</strong></div>
+          <div class="summary-total-line"><span>Delivery fee</span><strong>Up to ₹{{ pharmacy.delivery_fee|floatformat:2 }}</strong></div>
+          <p class="summary-note">Pickup has no delivery fee. Home delivery includes the pharmacy's configured delivery fee.</p>
+        </aside>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+(() => {
+  const fulfilmentInputs = [...document.querySelectorAll('input[name="fulfilment"]')];
+  const paymentPanel = document.getElementById('payment-choices');
+  const pickupNote = document.getElementById('pickup-payment-note');
+  const addressField = document.getElementById('delivery-address-field');
+  const paymentOptions = [...document.querySelectorAll('[data-payment-choice]')];
+  const sync = () => {
+    const mode = document.querySelector('input[name="fulfilment"]:checked')?.value || '';
+    const isPickup = mode === 'pickup';
+    if (paymentPanel) paymentPanel.hidden = isPickup;
+    if (pickupNote) pickupNote.hidden = !isPickup;
+    if (addressField) addressField.hidden = isPickup;
+    paymentOptions.forEach((label) => {
+      const input = label.querySelector('input');
+      const isCounter = label.dataset.paymentChoice === 'pay_at_store';
+      label.hidden = isPickup || isCounter;
+      if (input) {
+        input.disabled = isPickup || isCounter;
+        if (label.dataset.paymentChoice === 'cash_on_delivery' && !isPickup && !paymentOptions.some((item) => item.querySelector('input')?.checked && !item.hidden)) input.checked = true;
+      }
+    });
+  };
+  fulfilmentInputs.forEach((input) => input.addEventListener('change', sync));
+  sync();
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,383 @@
+/* Dark theme charcoal surface pass. This file is loaded last; light mode is untouched. */
+html[data-theme="dark"] {
+  color-scheme: dark !important;
+  --mk-bg: #1b201e !important;
+  --mk-card: #252b29 !important;
+  --mk-card-2: #2b312f !important;
+  --mk-ink: #f2f5f3 !important;
+  --mk-muted: #b8c3bd !important;
+  --mk-border: #414a45 !important;
+  --mk-soft: #303734 !important;
+  --mk-primary: #66dec8;
+  --mk-accent: #66dec8;
+  --mk-accent-2: #8cebd9;
+  --mk-shadow: 0 10px 30px rgba(0,0,0,.28) !important;
+  --mk-shadow-hover: 0 16px 42px rgba(0,0,0,.38) !important;
+  --mm-dark-surface: #252b29 !important;
+  --mm-dark-surface-raised: #2b312f !important;
+  --mm-dark-surface-soft: #303734 !important;
+  --mm-dark-border: #414a45 !important;
+  --mm-dark-text: #f2f5f3 !important;
+  --mm-dark-muted: #b8c3bd !important;
+  background: #1b201e !important;
+  color: #f2f5f3 !important;
+}
+html[data-theme="dark"],
+html[data-theme="dark"] body,
+html[data-theme="dark"] #main-content,
+html[data-theme="dark"] main,
+html[data-theme="dark"] .container,
+html[data-theme="dark"] .container-fluid,
+html[data-theme="dark"] section,
+html[data-theme="dark"] .mk-page-hero,
+html[data-theme="dark"] .mk-hero,
+html[data-theme="dark"] .mk-section,
+html[data-theme="dark"] .mk-section-muted,
+html[data-theme="dark"] .mk-section-soft,
+html[data-theme="dark"] .mm-section,
+html[data-theme="dark"] .mm-section-soft,
+html[data-theme="dark"] .mm-product-section,
+html[data-theme="dark"] .mm-category-section,
+html[data-theme="dark"] .mm-local-listings,
+html[data-theme="dark"] .mm-popular-searches,
+html[data-theme="dark"] .mm-editorial-section,
+html[data-theme="dark"] .mm-how-section,
+html[data-theme="dark"] .mm-join-section,
+html[data-theme="dark"] .mm-image-strip-section,
+html[data-theme="dark"] .mm-offers-section,
+html[data-theme="dark"] .mm-plus-wrap,
+html[data-theme="dark"] .mk-trust-strip,
+html[data-theme="dark"] .mk-form-page,
+html[data-theme="dark"] .mk-dashboard-page,
+html[data-theme="dark"] .mk-bottom-cta,
+html[data-theme="dark"] .hp-trust-section,
+html[data-theme="dark"] .hp-reviews-section,
+html[data-theme="dark"] .mm-reviews-section,
+html[data-theme="dark"] .mm-trending-section,
+html[data-theme="dark"] .mk-footer,
+html[data-theme="dark"] .mm-demo-map-section {
+  background-color: #1b201e !important;
+  color: #f2f5f3 !important;
+  background-image: none !important;
+}
+
+/* Replace cards and Bootstrap surfaces that formerly used white or colored panels. */
+html[data-theme="dark"] .mm-showcase-card,
+html[data-theme="dark"] .mm-live-product-card,
+html[data-theme="dark"] .mm-category-tile,
+html[data-theme="dark"] .mm-review-card,
+html[data-theme="dark"] .mm-difference-card,
+html[data-theme="dark"] .mm-editorial-card,
+html[data-theme="dark"] .mk-eyebrow,
+html[data-theme="dark"] .mk-search-box,
+html[data-theme="dark"] .hero-product-card,
+html[data-theme="dark"] .floating-card,
+html[data-theme="dark"] .floating-bubble,
+html[data-theme="dark"] .mk-product-card,
+html[data-theme="dark"] .mk-category-card,
+html[data-theme="dark"] .mk-step-card,
+html[data-theme="dark"] .mk-pharmacy-card,
+html[data-theme="dark"] .mk-comparison-card,
+html[data-theme="dark"] .mk-form-card,
+html[data-theme="dark"] .mk-panel-card,
+html[data-theme="dark"] .mk-order-summary,
+html[data-theme="dark"] .mk-order-card,
+html[data-theme="dark"] .mk-cart-store-card,
+html[data-theme="dark"] .auth-card,
+html[data-theme="dark"] .profile-card,
+html[data-theme="dark"] .profile-panel,
+html[data-theme="dark"] .profile-panel-card,
+html[data-theme="dark"] .dashboard-table,
+html[data-theme="dark"] .metric-card,
+html[data-theme="dark"] .panel-card,
+html[data-theme="dark"] .chat-panel,
+html[data-theme="dark"] .chat-message,
+html[data-theme="dark"] .hp-metric-card,
+html[data-theme="dark"] .hp-review-card,
+html[data-theme="dark"] .hp-editorial-card,
+html[data-theme="dark"] .hp-promotion-card,
+html[data-theme="dark"] .mm-empty-message,
+html[data-theme="dark"] .mm-floating-note,
+html[data-theme="dark"] .mm-art-card,
+html[data-theme="dark"] .mm-eyebrow,
+html[data-theme="dark"] .mm-hero-search,
+html[data-theme="dark"] .mm-join-inner,
+html[data-theme="dark"] .mm-keyword-list a,
+html[data-theme="dark"] .mm-admin-content-note,
+html[data-theme="dark"] .mm-offer-image-only,
+html[data-theme="dark"] .mm-image-strip-card,
+html[data-theme="dark"] .mm-prescription-work-card,
+html[data-theme="dark"] .mm-prescription-chip-list span,
+html[data-theme="dark"] .mm-basket-match-card,
+html[data-theme="dark"] .mm-compare-filters,
+html[data-theme="dark"] .mm-payment-option,
+html[data-theme="dark"] .mm-order-progress-panel,
+html[data-theme="dark"] .mm-order-payment-box,
+html[data-theme="dark"] .mm-order-progress-dot,
+html[data-theme="dark"] .mk-map-card,
+html[data-theme="dark"] .mk-map-card .map-card-heading,
+html[data-theme="dark"] .mk-map-card .map-note,
+html[data-theme="dark"] .mm-demo-map-shell,
+html[data-theme="dark"] .mm-demo-results-panel,
+html[data-theme="dark"] .mm-demo-result-card,
+html[data-theme="dark"] .mm-demo-map-fallback,
+html[data-theme="dark"] .mm-demo-disclaimer,
+html[data-theme="dark"] .mm-gmap-popup,
+html[data-theme="dark"] .bg-white,
+html[data-theme="dark"] .bg-light,
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .card-header,
+html[data-theme="dark"] .card-footer,
+html[data-theme="dark"] .list-group-item,
+html[data-theme="dark"] .modal-content,
+html[data-theme="dark"] .offcanvas,
+html[data-theme="dark"] .dropdown-menu,
+html[data-theme="dark"] .accordion-item,
+html[data-theme="dark"] .accordion-button,
+html[data-theme="dark"] .pagination .page-link,
+html[data-theme="dark"] .table-light,
+html[data-theme="dark"] .table thead th,
+html[data-theme="dark"] .table > :not(caption) > * > *,
+html[data-theme="dark"] .mk-panel-heading,
+html[data-theme="dark"] .mk-table thead th {
+  background-color: #252b29 !important;
+  border-color: #414a45 !important;
+  color: #f2f5f3 !important;
+  background-image: none !important;
+}
+html[data-theme="dark"] .mm-section-soft,
+html[data-theme="dark"] .mm-reviews-section,
+html[data-theme="dark"] .mm-trending-section,
+html[data-theme="dark"] .mm-art-search,
+html[data-theme="dark"] .mm-floating-note > span,
+html[data-theme="dark"] .mm-difference-card > span,
+html[data-theme="dark"] .mm-category-art,
+html[data-theme="dark"] .mm-add-product-toggle,
+html[data-theme="dark"] .mm-drawer-footer,
+html[data-theme="dark"] .mm-payment-note,
+html[data-theme="dark"] .mm-footer-trust,
+html[data-theme="dark"] .mm-prescription-fields,
+html[data-theme="dark"] .mm-prescription-requested,
+html[data-theme="dark"] .mm-no-match,
+html[data-theme="dark"] .mk-pharmacy-search,
+html[data-theme="dark"] .mk-search-box,
+html[data-theme="dark"] .form-check,
+html[data-theme="dark"] .input-group-text {
+  background-color: #232927 !important;
+  border-color: #414a45 !important;
+  color: #f2f5f3 !important;
+}
+html[data-theme="dark"] .site-nav,
+html[data-theme="dark"] .navbar,
+html[data-theme="dark"] .mm-mobile-drawer {
+  background: #1b201e !important;
+  background-image: none !important;
+  border-color: #414a45 !important;
+}
+html[data-theme="dark"] .mk-hero::before,
+html[data-theme="dark"] .mk-hero::after,
+html[data-theme="dark"] .mk-page-hero::before,
+html[data-theme="dark"] .mk-page-hero::after {
+  background-image: none !important;
+  opacity: 0 !important;
+}
+html[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select,
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .form-select,
+html[data-theme="dark"] .mk-search-box input {
+  background-color: #252b29 !important;
+  border-color: #47514b !important;
+  color: #f2f5f3 !important;
+  box-shadow: none;
+}
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder { color: #a9a9a9 !important; }
+html[data-theme="dark"] .text-dark,
+html[data-theme="dark"] .text-body,
+html[data-theme="dark"] .text-secondary,
+html[data-theme="dark"] .form-label,
+html[data-theme="dark"] .form-check-label,
+html[data-theme="dark"] .footer-title,
+html[data-theme="dark"] .mk-section-heading h2,
+html[data-theme="dark"] .mk-dashboard-heading h1,
+html[data-theme="dark"] .mk-form-intro h1,
+html[data-theme="dark"] .mm-section-heading h2,
+html[data-theme="dark"] .mm-showcase-copy h3,
+html[data-theme="dark"] .mm-live-product-copy h3,
+html[data-theme="dark"] .mm-category-name,
+html[data-theme="dark"] .mm-review-author strong { color: #f2f5f3 !important; }
+html[data-theme="dark"] .text-muted,
+html[data-theme="dark"] small,
+html[data-theme="dark"] .footer-copy,
+html[data-theme="dark"] .mm-section-heading p,
+html[data-theme="dark"] .mm-showcase-copy p,
+html[data-theme="dark"] .mm-live-product-copy p,
+html[data-theme="dark"] .mm-price-note { color: #b8c3bd !important; }
+html[data-theme="dark"] .mm-footer-columns,
+html[data-theme="dark"] .footer-social-banner,
+html[data-theme="dark"] .footer-social-link,
+html[data-theme="dark"] .mm-footer-trust,
+html[data-theme="dark"] .mm-footer-note,
+html[data-theme="dark"] .mm-join-inner,
+html[data-theme="dark"] .mm-showcase-image,
+html[data-theme="dark"] .mm-live-image,
+html[data-theme="dark"] .mm-category-art,
+html[data-theme="dark"] .mm-admin-content-note,
+html[data-theme="dark"] .mm-empty-message,
+html[data-theme="dark"] .mm-keyword-list a,
+html[data-theme="dark"] .mm-plus-button,
+html[data-theme="dark"] .mm-plus-emblem,
+html[data-theme="dark"] .mk-trust-strip,
+html[data-theme="dark"] .hp-trust-section,
+html[data-theme="dark"] .hp-reviews-section,
+html[data-theme="dark"] .mk-footer,
+html[data-theme="dark"] .mm-footer-columns,
+html[data-theme="dark"] .mm-footer-intro,
+html[data-theme="dark"] .footer-bottom { background-color: #252b29 !important; background-image: none !important; border-color: #414a45 !important; }
+html[data-theme="dark"] .mm-footer-columns,
+html[data-theme="dark"] .mm-footer-intro,
+html[data-theme="dark"] .footer-bottom { border-color: #414a45 !important; }
+html[data-theme="dark"] .theme-toggle,
+html[data-theme="dark"] .btn-light-outline,
+html[data-theme="dark"] .btn-light,
+html[data-theme="dark"] .btn-outline-secondary {
+  background: #232927 !important;
+  color: #f2f5f3 !important;
+  border-color: #4b554f !important;
+}
+html[data-theme="dark"] .alert { background: #292f2d !important; border-color: #47514b !important; color: #f3f3f3 !important; }
+html[data-theme="dark"] .mm-gradient-text {
+  background-image: none !important;
+  background-clip: initial !important;
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: #66dec8 !important;
+  color: #66dec8 !important;
+}
+html[data-theme="dark"] .mm-demo-map-attribution { background: rgba(0,0,0,.92) !important; color: #dedede !important; border: 1px solid #4e5852; }
+html[data-theme="dark"] .mm-demo-search,
+html[data-theme="dark"] .mm-demo-search input,
+html[data-theme="dark"] .mm-demo-map-toolbar,
+html[data-theme="dark"] .mm-demo-legend,
+html[data-theme="dark"] .mm-demo-status {
+  background-color: #1b201e !important;
+  background-image: none !important;
+  color: #f2f5f3 !important;
+  border-color: #414a45 !important;
+}
+html[data-theme="dark"] .mm-demo-location-btn,
+html[data-theme="dark"] .mm-demo-reset-btn {
+  background-color: #232927 !important;
+  color: #f2f5f3 !important;
+  border-color: #4b554f !important;
+}
+html[data-theme="dark"] .mm-demo-location-btn.is-active {
+  background-color: #303734 !important;
+  color: #8cebd9 !important;
+  border-color: #69736d !important;
+}
+html[data-theme="dark"] .mm-demo-map-attribution strong { color: #f2cd85 !important; }
+html[data-theme="dark"] .mm-gmap-ground { fill: #252b29; }
+html[data-theme="dark"] .mm-gmap-grid-line { stroke: #353d38; }
+html[data-theme="dark"] .mm-gmap-water { fill: #232927; }
+html[data-theme="dark"] .mm-gmap-park { fill: #303734; stroke: #465049; }
+html[data-theme="dark"] .mm-gmap-park-detail { stroke: #414a45; }
+html[data-theme="dark"] .mm-gmap-roads-casing { stroke: #56605a; }
+html[data-theme="dark"] .mm-gmap-roads-major { stroke: #38403c; }
+html[data-theme="dark"] .mm-gmap-roads-minor { stroke: #48514b; }
+html[data-theme="dark"] .mm-gmap-labels text { fill: #b8b8b8; }
+html[data-theme="dark"] .mm-gmap-minor-labels text { fill: #a8b2ac; }
+html[data-theme="dark"] .mm-gmap-popup { background: #252b29 !important; color: #f2f5f3 !important; border-color: #59635d !important; }
+html[data-theme="dark"] .mm-gmap-popup > span:not(.mm-demo-popup-badge),
+html[data-theme="dark"] .mm-gmap-popup small { color: #b8c3bd !important; }
+html[data-theme="dark"] .mm-gmap-popup-stats b { background: #303734 !important; color: #8cebd9 !important; }
+
+/* Additional legacy surfaces with hard-coded white backgrounds in app.css. */
+html[data-theme="dark"] .stats-strip,
+html[data-theme="dark"] .verified,
+html[data-theme="dark"] .chat-panel,
+html[data-theme="dark"] .chat-message,
+html[data-theme="dark"] .dashboard-table,
+html[data-theme="dark"] .metric-card,
+html[data-theme="dark"] .panel-card,
+html[data-theme="dark"] .fake-store-icon.blue,
+html[data-theme="dark"] .trust-icon.blue,
+html[data-theme="dark"] .trust-icon.amber,
+html[data-theme="dark"] .stock-low,
+html[data-theme="dark"] .prescription-chip,
+html[data-theme="dark"] .stat-amber,
+html[data-theme="dark"] .mm-offer-card,
+html[data-theme="dark"] .mm-rail-arrow,
+html[data-theme="dark"] .mm-plus-button,
+html[data-theme="dark"] .mm-plus-emblem,
+html[data-theme="dark"] .mm-art-store-icon,
+html[data-theme="dark"] .mm-hero-search,
+html[data-theme="dark"] .mm-floating-note,
+html[data-theme="dark"] .mm-category-art,
+html[data-theme="dark"] .cart-product-icon,
+html[data-theme="dark"] .product-photo,
+html[data-theme="dark"] .mm-demo-map-wrap {
+  background-color: #252b29 !important;
+  background-image: none !important;
+  color: #f2f5f3 !important;
+  border-color: #414a45 !important;
+}
+html[data-theme="dark"] .cart-product-icon img,
+html[data-theme="dark"] .product-photo,
+html[data-theme="dark"] .medicine-result-visual > img {
+  background-color: #252b29 !important;
+}
+html[data-theme="dark"] .status-pending,
+html[data-theme="dark"] .status-completed,
+html[data-theme="dark"] .status-verified,
+html[data-theme="dark"] .status-processing,
+html[data-theme="dark"] .status-ready,
+html[data-theme="dark"] .status-out_for_delivery,
+html[data-theme="dark"] .status-clarification,
+html[data-theme="dark"] .status-refund_pending {
+  border-color: #47514b !important;
+  color: #f1f1f1 !important;
+  background-color: #292f2d !important;
+}
+
+/* Cover common inline white surfaces only when dark mode is active. */
+html[data-theme="dark"] [style*="background: #fff" i],
+html[data-theme="dark"] [style*="background:#fff" i],
+html[data-theme="dark"] [style*="background-color: white" i],
+html[data-theme="dark"] [style*="background-color:#fff" i],
+html[data-theme="dark"] [style*="background-color: #fff" i],
+html[data-theme="dark"] [style*="background: white" i] {
+  background-color: #252b29 !important;
+  background-image: none !important;
+  color: #f2f5f3 !important;
+  border-color: #414a45 !important;
+}
+
+@media (max-width: 575.98px) {
+  html[data-theme="dark"] .mm-demo-map-section { background: #1b201e !important; }
+  html[data-theme="dark"] .mm-demo-map-wrap { background: #252b29 !important; }
+}
+/* Map controls are UI surfaces too: avoid the default white Leaflet/demo-control blocks in dark mode. */
+html[data-theme="dark"] .mm-gmap-map-type,
+html[data-theme="dark"] .mm-gmap-zoom-controls,
+html[data-theme="dark"] .mm-gmap-zoom-controls button,
+html[data-theme="dark"] .mm-gmap-popup-close {
+  background: #252b29 !important;
+  color: #f2f5f3 !important;
+  border-color: #47514b !important;
+}
+html[data-theme="dark"] .mm-gmap-zoom-controls button:hover,
+html[data-theme="dark"] .mm-gmap-popup-close:hover {
+  background: #111 !important;
+  color: #fff !important;
+}
+html[data-theme="dark"] .mm-gmap-map-type b {
+  background: #363e3a !important;
+  color: #f2cd85 !important;
+}
+html[data-theme="dark"] .mk-map { background: #252b29 !important; }
+/* Transform only the raster basemap, not marker/pop-up overlays, into a dark map when theme is dark. */
+html[data-theme="dark"] .mk-map .leaflet-tile-pane {
+  filter: invert(.9) hue-rotate(180deg) brightness(.72) contrast(.95) saturate(.65);
+}

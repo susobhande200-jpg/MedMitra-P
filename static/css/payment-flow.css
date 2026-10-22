@@ -1,0 +1,30 @@
+/* Checkout and payment review components; scoped to avoid changing unrelated UI. */
+.mm-payment-online-panel { min-width: 0; }
+.mm-payment-online-panel h2 { margin-bottom: .55rem; }
+.mm-qr-payment-content { display: grid; grid-template-columns: minmax(150px, 220px) minmax(0, 1fr); gap: 1.25rem; align-items: center; }
+.mm-payment-qr-image { display: grid; place-items: center; padding: 1rem; min-height: 180px; border: 1px solid var(--bs-border-color, #dbe8e5); border-radius: 1rem; background: var(--mm-panel-bg, #f7fbfa); }
+.mm-payment-qr-image img { display: block; width: min(100%, 190px); max-height: 220px; object-fit: contain; }
+.mm-payment-qr-instructions { min-width: 0; overflow-wrap: anywhere; }
+.mm-payment-amount { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 800; letter-spacing: -.03em; margin: .3rem 0; }
+.mm-payment-proof-form, .mm-payment-review-form { padding-top: 1rem; border-top: 1px solid var(--bs-border-color, #dbe8e5); }
+.mm-payment-proof-form h3 { font-size: 1rem; font-weight: 750; margin-bottom: 1rem; }
+.mm-payment-proof-form .form-control, .mm-payment-review-form .form-control { max-width: 100%; }
+.mm-payment-proof-form .form-control:focus, .mm-payment-review-form .form-control:focus { box-shadow: 0 0 0 .2rem rgba(43, 137, 125, .15); }
+.mm-payment-online-panel .alert { overflow-wrap: anywhere; }
+@media (max-width: 575.98px) {
+  .mm-qr-payment-content { grid-template-columns: minmax(0, 1fr); }
+  .mm-payment-qr-image { min-height: auto; }
+  .mm-payment-qr-image img { width: min(100%, 170px); max-height: 180px; }
+  .mm-payment-review-form > div { width: 100%; }
+  .mm-payment-review-form .btn { flex: 1 1 100%; }
+}
+
+/* Respect the site's charcoal dark theme without affecting light mode. */
+html[data-theme="dark"] .mm-payment-qr-image { background: #252a30; border-color: #414952; }
+html[data-theme="dark"] .mm-payment-qr-instructions,
+html[data-theme="dark"] .mm-payment-online-panel,
+html[data-theme="dark"] .mm-payment-proof-form,
+html[data-theme="dark"] .mm-payment-review-form { color: #e8edf1; }
+html[data-theme="dark"] .mm-payment-amount { color: #ffffff; }
+html[data-theme="dark"] .mm-payment-proof-form,
+html[data-theme="dark"] .mm-payment-review-form { border-top-color: #3d444d; }

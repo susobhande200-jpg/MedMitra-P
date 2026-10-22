@@ -1,0 +1,222 @@
+/* MedMitra dark-mode surface cleanup.
+   Loaded after all page styles so hard-coded white surfaces are replaced only in dark mode.
+   Light mode receives no selectors from this file. */
+html[data-theme="dark"] {
+  --mm-dark-surface: #142322;
+  --mm-dark-surface-raised: #192b29;
+  --mm-dark-surface-soft: #1b302d;
+  --mm-dark-border: #304943;
+  --mm-dark-text: #edf7f4;
+  --mm-dark-muted: #aec4be;
+  background-color: #0d1718 !important;
+  color-scheme: dark !important;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body,
+html[data-theme="dark"] #main-content,
+html[data-theme="dark"] main {
+  background-color: #0d1718 !important;
+  color: var(--mm-dark-text) !important;
+}
+
+/* Homepage sections that previously inherited pale fixed backgrounds. */
+html[data-theme="dark"] .mm-section,
+html[data-theme="dark"] .mm-product-section,
+html[data-theme="dark"] .mm-category-section,
+html[data-theme="dark"] .mm-local-listings,
+html[data-theme="dark"] .mm-popular-searches,
+html[data-theme="dark"] .mm-editorial-section,
+html[data-theme="dark"] .mm-how-section,
+html[data-theme="dark"] .mk-section,
+html[data-theme="dark"] .mk-section-muted,
+html[data-theme="dark"] .mk-trust-strip,
+html[data-theme="dark"] .mk-form-page,
+html[data-theme="dark"] .mk-dashboard-page,
+html[data-theme="dark"] .mk-bottom-cta,
+html[data-theme="dark"] .hp-trust-section,
+html[data-theme="dark"] .hp-reviews-section,
+html[data-theme="dark"] .mm-join-section,
+html[data-theme="dark"] .mm-image-strip-section,
+html[data-theme="dark"] .mm-offers-section,
+html[data-theme="dark"] .mm-plus-wrap {
+  background-color: #0d1718 !important;
+  color: var(--mm-dark-text) !important;
+}
+html[data-theme="dark"] .mm-section-soft,
+html[data-theme="dark"] .mm-reviews-section,
+html[data-theme="dark"] .mm-trending-section {
+  background-color: #101e1e !important;
+}
+
+/* Commerce cards, search controls, and placeholder canvases. */
+html[data-theme="dark"] .mm-showcase-card,
+html[data-theme="dark"] .mm-live-product-card,
+html[data-theme="dark"] .mm-category-tile,
+html[data-theme="dark"] .mm-review-card,
+html[data-theme="dark"] .mm-difference-card,
+html[data-theme="dark"] .mm-editorial-card,
+html[data-theme="dark"] .mk-eyebrow,
+html[data-theme="dark"] .mk-search-box,
+html[data-theme="dark"] .hero-product-card,
+html[data-theme="dark"] .floating-bubble,
+html[data-theme="dark"] .mk-product-card,
+html[data-theme="dark"] .mk-category-card,
+html[data-theme="dark"] .mk-step-card,
+html[data-theme="dark"] .mk-pharmacy-card,
+html[data-theme="dark"] .mk-comparison-card,
+html[data-theme="dark"] .mk-form-card,
+html[data-theme="dark"] .mk-panel-card,
+html[data-theme="dark"] .mk-order-summary,
+html[data-theme="dark"] .mk-order-card,
+html[data-theme="dark"] .mk-cart-store-card,
+html[data-theme="dark"] .auth-card,
+html[data-theme="dark"] .profile-card,
+html[data-theme="dark"] .profile-panel,
+html[data-theme="dark"] .hp-metric-card,
+html[data-theme="dark"] .hp-review-card,
+html[data-theme="dark"] .hp-editorial-card,
+html[data-theme="dark"] .hp-promotion-card,
+html[data-theme="dark"] .mm-empty-message,
+html[data-theme="dark"] .mm-floating-note,
+html[data-theme="dark"] .mm-art-card,
+html[data-theme="dark"] .mm-eyebrow,
+html[data-theme="dark"] .mm-hero-search,
+html[data-theme="dark"] .mm-join-inner,
+html[data-theme="dark"] .mm-keyword-list a,
+html[data-theme="dark"] .mm-admin-content-note,
+html[data-theme="dark"] .mm-offer-image-only,
+html[data-theme="dark"] .mm-image-strip-card,
+html[data-theme="dark"] .mm-showcase-image,
+html[data-theme="dark"] .mm-live-image,
+html[data-theme="dark"] .mm-category-art,
+html[data-theme="dark"] .product-photo,
+html[data-theme="dark"] .medicine-result-visual > img,
+html[data-theme="dark"] .mm-offer-image-only {
+  background-color: var(--mm-dark-surface) !important;
+  border-color: var(--mm-dark-border) !important;
+  color: var(--mm-dark-text) !important;
+}
+
+html[data-theme="dark"] .mm-art-search,
+html[data-theme="dark"] .mm-floating-note > span,
+html[data-theme="dark"] .mm-difference-card > span,
+html[data-theme="dark"] .mm-category-art,
+html[data-theme="dark"] .mm-add-product-toggle,
+html[data-theme="dark"] .mm-drawer-footer,
+html[data-theme="dark"] .mm-payment-note,
+html[data-theme="dark"] .mm-footer-trust {
+  background-color: var(--mm-dark-surface-soft) !important;
+  border-color: var(--mm-dark-border) !important;
+  color: var(--mm-dark-text) !important;
+}
+
+/* Generic Bootstrap surfaces used on account, shop and checkout pages. */
+html[data-theme="dark"] .bg-white,
+html[data-theme="dark"] .bg-light,
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .card-header,
+html[data-theme="dark"] .card-footer,
+html[data-theme="dark"] .list-group-item,
+html[data-theme="dark"] .modal-content,
+html[data-theme="dark"] .offcanvas,
+html[data-theme="dark"] .dropdown-menu,
+html[data-theme="dark"] .accordion-item,
+html[data-theme="dark"] .accordion-button,
+html[data-theme="dark"] .pagination .page-link,
+html[data-theme="dark"] .table-light,
+html[data-theme="dark"] .table thead th,
+html[data-theme="dark"] .mk-panel-heading,
+html[data-theme="dark"] .mk-table thead th,
+html[data-theme="dark"] .hp-keyword-list a {
+  background-color: var(--mm-dark-surface) !important;
+  border-color: var(--mm-dark-border) !important;
+  color: var(--mm-dark-text) !important;
+}
+html[data-theme="dark"] .accordion-button:not(.collapsed),
+html[data-theme="dark"] .list-group-item-action:hover,
+html[data-theme="dark"] .dropdown-item:hover,
+html[data-theme="dark"] .pagination .page-link:hover {
+  background-color: var(--mm-dark-surface-soft) !important;
+  color: var(--mm-dark-text) !important;
+}
+html[data-theme="dark"] .text-dark,
+html[data-theme="dark"] .text-body,
+html[data-theme="dark"] .text-secondary,
+html[data-theme="dark"] .form-label,
+html[data-theme="dark"] .form-check-label,
+html[data-theme="dark"] .mm-showcase-copy h3,
+html[data-theme="dark"] .mm-showcase-copy h3 a,
+html[data-theme="dark"] .mm-live-product-copy h3,
+html[data-theme="dark"] .mm-live-product-copy h3 a,
+html[data-theme="dark"] .mm-live-price strong,
+html[data-theme="dark"] .mm-difference-card h3,
+html[data-theme="dark"] .mm-editorial-card h2,
+html[data-theme="dark"] .mm-section-heading h2,
+html[data-theme="dark"] .mm-category-name,
+html[data-theme="dark"] .mm-review-author strong,
+html[data-theme="dark"] .mm-floating-note strong,
+html[data-theme="dark"] .mm-art-store strong,
+html[data-theme="dark"] .mm-art-store > b {
+  color: var(--mm-dark-text) !important;
+}
+html[data-theme="dark"] .text-muted,
+html[data-theme="dark"] small,
+html[data-theme="dark"] .mm-showcase-copy p,
+html[data-theme="dark"] .mm-live-product-copy p,
+html[data-theme="dark"] .mm-live-product-copy > small:first-child,
+html[data-theme="dark"] .mm-listing-freshness,
+html[data-theme="dark"] .mm-difference-card p,
+html[data-theme="dark"] .mm-editorial-card > div,
+html[data-theme="dark"] .mm-section-heading p,
+html[data-theme="dark"] .mm-hero-copy > p,
+html[data-theme="dark"] .mm-search-benefits,
+html[data-theme="dark"] .mm-join-inner p,
+html[data-theme="dark"] .mm-price-note {
+  color: var(--mm-dark-muted) !important;
+}
+
+/* Ensure the pharmacy finder demo's controls and popups match dark mode.
+   OpenStreetMap raster tiles remain provider-rendered map imagery. */
+html[data-theme="dark"] .leaflet-control-zoom a,
+html[data-theme="dark"] .leaflet-bar a,
+html[data-theme="dark"] .leaflet-popup-content-wrapper,
+html[data-theme="dark"] .leaflet-popup-tip,
+html[data-theme="dark"] .leaflet-control-attribution {
+  background: var(--mm-dark-surface) !important;
+  color: var(--mm-dark-text) !important;
+  border-color: var(--mm-dark-border) !important;
+}
+html[data-theme="dark"] .leaflet-control-zoom a:hover,
+html[data-theme="dark"] .leaflet-bar a:hover {
+  background: var(--mm-dark-surface-soft) !important;
+}
+
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .form-select,
+html[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea {
+  background-color: #10201f !important;
+  border-color: var(--mm-dark-border) !important;
+  color: var(--mm-dark-text) !important;
+}
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+  color: #9bb5ad !important;
+}
+html[data-theme="dark"] .table,
+html[data-theme="dark"] .table > :not(caption) > * > * {
+  --bs-table-bg: var(--mm-dark-surface);
+  --bs-table-color: var(--mm-dark-text);
+  --bs-table-border-color: var(--mm-dark-border);
+  border-color: var(--mm-dark-border) !important;
+}
+html[data-theme="dark"] .site-nav {
+  background-color: rgba(20, 34, 32, .98) !important;
+  border-color: var(--mm-dark-border) !important;
+}
+html[data-theme="dark"] .skip-link:focus {
+  background: var(--mm-dark-surface) !important;
+  color: var(--mm-dark-text) !important;
+}
