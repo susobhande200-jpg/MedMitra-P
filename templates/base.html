@@ -114,7 +114,14 @@
 <footer class="mk-footer">
  <div class="container">
   <div class="mm-footer-intro">
-   <div><a class="brand footer-brand" href="{% url 'home' %}" aria-label="MedMitra home"><span class="brand-mark"><i class="bi bi-capsule-pill"></i></span><span>Med<span class="brand-accent">Mitra</span></span></a><p class="footer-copy">A simpler way to discover medicines, compare retailer-reported prices and find participating pharmacies near you.</p></div>
+   <div><a class="brand footer-brand" href="{% url 'home' %}" aria-label="MedMitra home">
+    <img
+        src="{% static 'images/medmitra-icon.png' %}"
+        alt="MedMitra"
+        class="footer-medmitra-logo"
+    >
+    <span>Med<span class="brand-accent">Mitra</span></span>
+</a><span>Med<span class="brand-accent">Mitra</span></span></a><p class="footer-copy">A simpler way to discover medicines, compare retailer-reported prices and find participating pharmacies near you.</p></div>
    <div class="mm-footer-trust"><i class="bi bi-shield-check"></i><span><strong>Clear choices, closer to home</strong><small>Pharmacy listings are visible after approval. Confirm current stock and price with the store.</small></span></div>
   </div>
   <div class="mm-footer-columns">

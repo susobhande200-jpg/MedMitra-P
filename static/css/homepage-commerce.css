@@ -1547,3 +1547,24 @@ html[data-theme="dark"] .mm-plus-banner {
     height: 100%;
     object-fit: contain;
 }
+.footer-medmitra-logo {
+    display: block;
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.footer-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+@media (max-width: 576px) {
+    .footer-medmitra-logo {
+        width: 36px;
+        height: 36px;
+    }
+}
