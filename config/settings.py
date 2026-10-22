@@ -22,6 +22,7 @@ _default_debug = (
 )
 DEBUG = os.getenv("DJANGO_DEBUG", _default_debug).strip().lower() == "true"
 
+
 # Allowed hosts.
 _hosts_value = os.getenv(
     "DJANGO_ALLOWED_HOSTS",
@@ -97,7 +98,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
 
-# Database configuration.
+# Database configuration: Neon PostgreSQL in production, SQLite locally.
 DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
 
 if DATABASE_URL:
@@ -157,7 +158,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 
-# Cloudinary configuration for uploaded images.
+# Cloudinary configuration for uploaded media.
 CLOUDINARY_STORAGE = {
     "CLOUD_NAME": os.getenv("CLOUDINARY_CLOUD_NAME", ""),
     "API_KEY": os.getenv("CLOUDINARY_API_KEY", ""),
@@ -168,8 +169,9 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 
-# Django 4.2+: use Cloudinary for uploaded files.
-# Keep static assets on Django static storage locally and WhiteNoise in production.
+# Django storage configuration.
+# Medicine images use Cloudinary.
+# Static assets remain local during development and use WhiteNoise in production.
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
@@ -182,6 +184,9 @@ STORAGES = {
         ),
     },
 }
+
+# Compatibility with django-cloudinary-storage's collectstatic command.
+STATICFILES_STORAGE = STORAGES["staticfiles"]["BACKEND"]
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
