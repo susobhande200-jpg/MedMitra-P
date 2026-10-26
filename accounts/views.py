@@ -32,7 +32,7 @@ def register(request):
             except Exception:
                 messages.warning(request, "Account created, but email delivery is not configured. You can continue and ask the administrator to configure SMTP.")
             login(request, user)
-            return redirect("customer_dashboard")
+            return redirect("home")
     else:
         form = PatientRegistrationForm()
     return render(request, "accounts/register.html", {"form": form})
