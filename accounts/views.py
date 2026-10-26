@@ -15,7 +15,7 @@ User = get_user_model()
 
 def register(request):
     if request.user.is_authenticated:
-        return redirect("customer_dashboard")
+        return redirect("home")
     if request.method == "POST":
         form = PatientRegistrationForm(request.POST)
         if form.is_valid():
